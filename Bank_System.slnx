@@ -1,4 +1,8 @@
 <Solution>
   <Project Path="Bank.API/Bank.API.csproj" />
-  <Project Path="TicketApp/TicketApp.csproj" />
+  <Project Path="QueueDisplay/QueueDisplay.csproj" Id="84faebcc-4297-4888-b6bf-85a9e1b0d32d">
+    <Platform Project="x64" />
+    <Deploy />
+  </Project>
+  <Project Path="TicketApp/TicketApp.csproj" Id="2b2fc47c-e0d2-45d9-b9d7-852c86592f9e" />
 </Solution>

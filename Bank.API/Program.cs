@@ -1,23 +1,22 @@
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+Queue<string> queue = new Queue<string>();
+int counter = 1;
+
+app.MapPost("/ticket", () =>
 {
-    app.MapOpenApi();
-}
+    var number = $"A{counter++:000}";
+    queue.Enqueue(number);
+    return Results.Ok(number);
+});
 
-app.UseHttpsRedirection();
+app.MapGet("/next", () =>
+{
+    if (queue.Count == 0)
+        return Results.Ok("EMPTY");
 
-app.UseAuthorization();
-
-app.MapControllers();
+    return Results.Ok(queue.Dequeue());
+});
 
 app.Run();

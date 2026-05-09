@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "QueueDisplay (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "QueueDisplay (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
