@@ -12,13 +12,9 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using QueueDisplay.Views;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-using Microsoft.UI.Xaml;
-using TellerApp.ViewModels;
-
-namespace TellerApp
+namespace QueueDisplay
 {
     public sealed partial class MainWindow : Window
     {
@@ -26,8 +22,33 @@ namespace TellerApp
         {
             this.InitializeComponent();
 
-            RootGrid.DataContext =
-                new MainViewModel();
+            ContentFrame.Navigate(typeof(QueuePage));
+        }
+
+        private void MainNav_SelectionChanged(
+            NavigationView sender,
+            NavigationViewSelectionChangedEventArgs args)
+        {
+            if (args.SelectedItemContainer == null)
+                return;
+
+            string tag =
+                args.SelectedItemContainer.Tag.ToString();
+
+            switch (tag)
+            {
+                case "queue":
+                    ContentFrame.Navigate(typeof(QueuePage));
+                    break;
+
+                case "transfer":
+                    ContentFrame.Navigate(typeof(TransferPage));
+                    break;
+
+                case "currency":
+                    ContentFrame.Navigate(typeof(CurrencyPage));
+                    break;
+            }
         }
     }
 }

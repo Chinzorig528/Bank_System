@@ -1,0 +1,40 @@
+<Page
+    x:Class="QueueDisplay.Views.CurrencyPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Background="#1E1E1E">
+
+        <StackPanel
+            Width="400"
+            Spacing="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+
+            <TextBlock
+                Text="CURRENCY"
+                FontSize="36"
+                FontWeight="Bold"
+                Foreground="White"/>
+
+            <TextBox
+                x:Name="BuyRateBox"
+                Header="USD Buy Rate"/>
+
+            <TextBox
+                x:Name="SellRateBox"
+                Header="USD Sell Rate"/>
+
+            <Button
+                Content="Update Rate"
+                Height="50"
+                Click="Update_Click"/>
+
+            <TextBlock
+                x:Name="StatusText"
+                Foreground="Lime"/>
+
+        </StackPanel>
+
+    </Grid>
+</Page>

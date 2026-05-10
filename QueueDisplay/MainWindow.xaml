@@ -1,74 +1,56 @@
 <Window
-    x:Class="TellerApp.MainWindow"
+    x:Class="QueueDisplay.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:TellerApp.ViewModels"
     mc:Ignorable="d">
 
-    <Grid
-    x:Name="RootGrid"
-    Background="#1E1E1E">
+    <Grid>
 
-        <StackPanel
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="20">
+        <NavigationView
+            x:Name="MainNav"
+            PaneDisplayMode="Left"
+            IsBackButtonVisible="Collapsed"
+            SelectionChanged="MainNav_SelectionChanged">
 
-            <TextBlock
-                Text="TELLER SYSTEM"
-                FontSize="36"
-                FontWeight="Bold"
-                Foreground="White"
-                HorizontalAlignment="Center"/>
+            <NavigationView.MenuItems>
 
-            <Border
-                Width="400"
-                Height="200"
-                CornerRadius="20"
-                Background="#2D2D30"
-                Padding="20">
+                <NavigationViewItem
+                    Content="Queue"
+                    Tag="queue">
 
-                <StackPanel Spacing="10">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="People"/>
+                    </NavigationViewItem.Icon>
 
-                    <TextBlock
-                        Text="Current Ticket"
-                        FontSize="20"
-                        Foreground="Gray"/>
+                </NavigationViewItem>
 
-                    <TextBlock
-                        Text="{Binding CurrentTicket.TicketNumber}"
-                        FontSize="48"
-                        FontWeight="Bold"
-                        Foreground="Lime"/>
+                <NavigationViewItem
+                    Content="Transfer"
+                    Tag="transfer">
 
-                    <TextBlock
-                        Text="{Binding CurrentTicket.ServiceType}"
-                        FontSize="24"
-                        Foreground="White"/>
-                </StackPanel>
-            </Border>
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="Switch"/>
+                    </NavigationViewItem.Icon>
 
-            <StackPanel
-                Orientation="Horizontal"
-                Spacing="20"
-                HorizontalAlignment="Center">
+                </NavigationViewItem>
 
-                <Button
-                    Content="Call Next"
-                    Width="180"
-                    Height="60"
-                    Command="{Binding CallNextCommand}"/>
+                <NavigationViewItem
+                    Content="Currency"
+                    Tag="currency">
 
-                <Button
-                    Content="Complete"
-                    Width="180"
-                    Height="60"
-                    Command="{Binding CompleteCommand}"/>
-            </StackPanel>
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="World"/>
+                    </NavigationViewItem.Icon>
 
-        </StackPanel>
+                </NavigationViewItem>
+
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="ContentFrame"/>
+
+        </NavigationView>
 
     </Grid>
 </Window>
