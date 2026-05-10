@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TicketApp.Properties
+namespace BankTicket.Properties
 {
 
 
