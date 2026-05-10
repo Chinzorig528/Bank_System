@@ -62,6 +62,7 @@
             this.btnPrint.TabIndex = 2;
             this.btnPrint.Text = "Хэвлэх";
             this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
             // Form1
             // 
