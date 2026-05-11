@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="Bank.API/Bank.API.csproj" />
+  <Project Path="Bank.API/BankApi.csproj" />
   <Project Path="QueueDisplay/QueueDisplay.csproj" Id="84faebcc-4297-4888-b6bf-85a9e1b0d32d">
     <Platform Project="x64" />
     <Deploy />
