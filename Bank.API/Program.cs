@@ -1,37 +1,44 @@
-using BankApi.Services;
+using BankInfrastructure.Data;
+using BankInfrastructure.Interfaces;
+using BankInfrastructure.Repositories;
+using BankServices.Interfaces;
+using BankServices.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Swagger
+builder.Services.AddDbContext<BankDbContext>(options =>
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IQueueRepository, QueueRepository>();
+
+builder.Services.AddScoped<IQueueService, QueueService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<QueueService>();
-
 var app = builder.Build();
 
-// Swagger middleware
 app.UseSwagger();
 app.UseSwaggerUI();
 
-Queue<string> queue = new Queue<string>();
-int counter = 1;
-
-app.MapPost("/ticket", () =>
+app.MapPost("/queue", async (
+    IQueueService service) =>
 {
-    var number = $"A{counter++:000}";
-    queue.Enqueue(number);
-
-    return Results.Ok(number);
+    return await service.CreateQueueAsync();
 });
 
-app.MapGet("/next", () =>
+app.MapPost("/queue/next", async (
+    IQueueService service) =>
 {
-    if (queue.Count == 0)
-        return Results.Ok("EMPTY");
-
-    return Results.Ok(queue.Dequeue());
+    return await service.CallNextAsync();
 });
 
-app.Run();
+app.MapGet("/queue", async (
+    IQueueService service) =>
+{
+    return await service.GetAllAsync();
+});
+
 app.Run();
