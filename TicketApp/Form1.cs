@@ -20,8 +20,14 @@ namespace BankTicket
 
             printDocument.PrintPage += PrintDocument_PrintPage;
 
+            // Ticket printer-ийн жижиг цаасны хэмжээ
+            printDocument.DefaultPageSettings.PaperSize = new PaperSize("Ticket", 280, 220);
+            printDocument.DefaultPageSettings.Margins = new Margins(5, 5, 5, 5);
+
+
             // Bank.API-ийн URL
             client.BaseAddress = new Uri("http://localhost:5122/");
+
         }
 
         // API-аас дугаар авах
@@ -36,7 +42,7 @@ namespace BankTicket
                 {
                     string ticketNumber = await response.Content.ReadAsStringAsync();
 
-                    currentTicket = ticketNumber;
+                    currentTicket = ticketNumber.Trim('"');
                     lblTicketNumber.Text = currentTicket;
 
                     MessageBox.Show("Таны дугаар: " + currentTicket);
@@ -69,13 +75,38 @@ namespace BankTicket
         // 🔹 Хэвлэх загвар
         private void PrintDocument_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Font titleFont = new Font("Arial", 18, FontStyle.Bold);
-            Font ticketFont = new Font("Arial", 36, FontStyle.Bold);
-            Font dateFont = new Font("Arial", 10);
+            e.Graphics.Clear(Color.White);
 
-            e.Graphics.DrawString("Банкны дугаар", titleFont, Brushes.Black, 100, 100);
-            e.Graphics.DrawString(currentTicket, ticketFont, Brushes.Black, 150, 180);
-            e.Graphics.DrawString(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), dateFont, Brushes.Black, 120, 260);
+            Font titleFont = new Font("Arial", 12, FontStyle.Bold);
+            Font ticketFont = new Font("Arial", 34, FontStyle.Bold);
+            Font dateFont = new Font("Arial", 8);
+            Font infoFont = new Font("Arial", 8);
+
+            int pageWidth = e.PageBounds.Width;
+
+            string title = "ТАНЫ ДУГААР";
+            string ticket = currentTicket;
+            string date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            string info = "Та дугаараа хүлээнэ үү";
+
+            // Текстийн өргөнийг хэмжиж төвд байрлуулах
+            SizeF titleSize = e.Graphics.MeasureString(title, titleFont);
+            SizeF ticketSize = e.Graphics.MeasureString(ticket, ticketFont);
+            SizeF dateSize = e.Graphics.MeasureString(date, dateFont);
+            SizeF infoSize = e.Graphics.MeasureString(info, infoFont);
+
+            float titleX = (pageWidth - titleSize.Width) / 2;
+            float ticketX = (pageWidth - ticketSize.Width) / 2;
+            float dateX = (pageWidth - dateSize.Width) / 2;
+            float infoX = (pageWidth - infoSize.Width) / 2;
+
+            e.Graphics.DrawString(title, titleFont, Brushes.Black, titleX, 20);
+            e.Graphics.DrawString(ticket, ticketFont, Brushes.Black, ticketX, 55);
+            e.Graphics.DrawString(date, dateFont, Brushes.Black, dateX, 120);
+            e.Graphics.DrawString(info, infoFont, Brushes.Black, infoX, 145);
+
+            // Доод тасархай зураас
+            e.Graphics.DrawString("-------------------------------------------------------", infoFont, Brushes.Black, 35, 170);
         }
 
         private void label1_Click(object sender, EventArgs e)

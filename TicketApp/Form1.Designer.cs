@@ -35,18 +35,21 @@
             // 
             // lblTicketNumber
             // 
-            this.lblTicketNumber.AutoSize = true;
+            this.lblTicketNumber.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.lblTicketNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblTicketNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTicketNumber.Location = new System.Drawing.Point(143, 101);
+            this.lblTicketNumber.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.lblTicketNumber.Location = new System.Drawing.Point(246, 94);
             this.lblTicketNumber.Name = "lblTicketNumber";
-            this.lblTicketNumber.Size = new System.Drawing.Size(169, 69);
+            this.lblTicketNumber.Size = new System.Drawing.Size(300, 90);
             this.lblTicketNumber.TabIndex = 0;
             this.lblTicketNumber.Text = "A000";
+            this.lblTicketNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTicketNumber.Click += new System.EventHandler(this.label1_Click);
             // 
             // btnGetTicket
             // 
-            this.btnGetTicket.Location = new System.Drawing.Point(145, 197);
+            this.btnGetTicket.Location = new System.Drawing.Point(310, 212);
             this.btnGetTicket.Name = "btnGetTicket";
             this.btnGetTicket.Size = new System.Drawing.Size(142, 23);
             this.btnGetTicket.TabIndex = 1;
@@ -56,7 +59,7 @@
             // 
             // btnPrint
             // 
-            this.btnPrint.Location = new System.Drawing.Point(145, 236);
+            this.btnPrint.Location = new System.Drawing.Point(310, 275);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(142, 23);
             this.btnPrint.TabIndex = 2;
@@ -75,7 +78,6 @@
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
