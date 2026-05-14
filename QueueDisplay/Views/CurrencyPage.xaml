@@ -19,11 +19,13 @@
 
             <TextBox
                 x:Name="BuyRateBox"
-                Header="USD Buy Rate"/>
+                Header="USD Buy Rate"
+                Foreground="White"/>
 
             <TextBox
                 x:Name="SellRateBox"
-                Header="USD Sell Rate"/>
+                Header="USD Sell Rate"
+                Foreground="White"/>
 
             <Button
                 Content="Update Rate"

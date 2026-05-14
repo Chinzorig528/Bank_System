@@ -16,7 +16,7 @@ namespace BankTicket
         public async Task<TicketResponse> CreateTicketAsync()
         {
             HttpResponseMessage response =
-                await _client.PostAsync("queue", null);
+                await _client.PostAsync("api/queue", null);
 
             if (!response.IsSuccessStatusCode)
                 return null;

@@ -19,15 +19,18 @@
 
             <TextBox
                 x:Name="FromAccountBox"
+                Foreground="White"
                 Header="From Account"/>
 
             <TextBox
                 x:Name="ToAccountBox"
+                Foreground="White"
                 Header="To Account"/>
 
             <TextBox
                 x:Name="AmountBox"
-                Header="Amount"/>
+                Header="Amount"
+                Foreground="White"/>
 
             <Button
                 Content="Transfer"

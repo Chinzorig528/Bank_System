@@ -1,4 +1,4 @@
-﻿using BankApi.Services;
+﻿using BankServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApi.Controllers;
@@ -7,27 +7,35 @@ namespace BankApi.Controllers;
 [Route("api/[controller]")]
 public class QueueController : ControllerBase
 {
-    private readonly QueueService _queueService;
+    private readonly IQueueService _service;
 
-    public QueueController(QueueService queueService)
+    public QueueController(IQueueService service)
     {
-        _queueService = queueService;
+        _service = service;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create()
+    {
+        var queue = await _service.CreateQueueAsync();
+
+        return Ok(queue);
     }
 
     [HttpPost("next")]
-    public IActionResult Next()
+    public async Task<IActionResult> Next()
     {
-        var ticket = _queueService.GetNext();
+        var next = await _service.CallNextAsync();
 
-        if (ticket == null)
-            return NotFound("Queue empty");
+        if (next == null)
+            return NotFound();
 
-        return Ok(ticket);
+        return Ok(next);
     }
 
-    [HttpGet("current")]
-    public IActionResult Current()
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
     {
-        return Ok(_queueService.GetCurrent());
+        return Ok(await _service.GetAllAsync());
     }
 }

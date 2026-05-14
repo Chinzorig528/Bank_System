@@ -12,8 +12,9 @@ builder.Services.AddDbContext<BankDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
-
 builder.Services.AddScoped<IQueueService, QueueService>();
+
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,22 +24,6 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.MapPost("/queue", async (
-    IQueueService service) =>
-{
-    return await service.CreateQueueAsync();
-});
-
-app.MapPost("/queue/next", async (
-    IQueueService service) =>
-{
-    return await service.CallNextAsync();
-});
-
-app.MapGet("/queue", async (
-    IQueueService service) =>
-{
-    return await service.GetAllAsync();
-});
+app.MapControllers();
 
 app.Run();
