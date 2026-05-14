@@ -7,5 +7,6 @@
     <Platform Project="x64" />
     <Deploy />
   </Project>
+  <Project Path="TicketApp.test/TicketApp.test.csproj" Id="eb981483-fa3c-4942-8397-1aaaf5f22b2c" />
   <Project Path="TicketApp/TicketApp.csproj" Id="2b2fc47c-e0d2-45d9-b9d7-852c86592f9e" />
 </Solution>

@@ -45,7 +45,6 @@
             this.lblTicketNumber.TabIndex = 0;
             this.lblTicketNumber.Text = "A000";
             this.lblTicketNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblTicketNumber.Click += new System.EventHandler(this.label1_Click);
             // 
             // btnGetTicket
             // 
@@ -55,7 +54,7 @@
             this.btnGetTicket.TabIndex = 1;
             this.btnGetTicket.Text = "Дугаар авах";
             this.btnGetTicket.UseVisualStyleBackColor = true;
-            this.btnGetTicket.Click += new System.EventHandler(this.btnGetTicket_Click_1);
+            this.btnGetTicket.Click += new System.EventHandler(this.btnGetTicket_Click);
             // 
             // btnPrint
             // 
