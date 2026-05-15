@@ -79,22 +79,32 @@ namespace BankTicket
             }
         }
 
-        private void btnPrint_Click(
-            object sender,
-            EventArgs e)
+        private void btnPrint_Click(object sender, EventArgs e)
         {
             if (_currentTicket == null)
             {
-                MessageBox.Show(
-                    "Эхлээд ticket авна уу");
-
+                MessageBox.Show("Эхлээд ticket авна уу");
                 return;
             }
 
             _printer.SetTicket(
-                _currentTicket.Number);
+    _currentTicket.Number);
 
-            _printer.Preview();
+            string savedPath =
+                _printer.PrintToPdfFile();
+
+            MessageBox.Show(
+                $"PDF файл хадгалагдлаа:\n\n{savedPath}",
+                "Амжилттай",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = savedPath,
+                    UseShellExecute = true
+                });
         }
     }
 }
