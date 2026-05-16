@@ -155,7 +155,7 @@ namespace BankTicket.Tests
             // Assert
 
             Assert.AreEqual(
-                "queue",
+                "api/queue",
                 handler.CalledUrl);
         }
         [TestMethod]

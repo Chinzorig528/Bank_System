@@ -3,3 +3,8 @@ bin/
 obj/
 *.user
 *.suo
+*.db-shm
+*.db-wal
+*.db-shm
+*.db-wal
+*.db-journal
