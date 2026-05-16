@@ -36,4 +36,10 @@ public class QueueRepository : IQueueRepository
     {
         await _db.SaveChangesAsync();
     }
+    public async Task<CustomerQueue?> GetLastQueueAsync()
+    {
+        return await _db.CustomerQueues
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync();
+    }
 }

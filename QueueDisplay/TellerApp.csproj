@@ -48,6 +48,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BankDomain\BankDomain.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Views\CurrencyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

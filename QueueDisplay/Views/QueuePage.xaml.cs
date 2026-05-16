@@ -1,37 +1,40 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
+using QueueDisplay.Services;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using System.Net.Http;
 
 namespace QueueDisplay.Views
 {
     public sealed partial class QueuePage : Page
     {
-        private int number = 1;
+        private readonly TellerService _service;
 
         public QueuePage()
         {
             this.InitializeComponent();
+
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:5122/")
+            };
+
+            _service = new TellerService(client);
         }
 
-        private void CallNext_Click(
+        private async void CallNext_Click(
             object sender,
             RoutedEventArgs e)
         {
-            number++;
+            var ticket = await _service.CallNextAsync();
 
-            TicketText.Text =
-                $"A{number:D3}";
+            if (ticket == null)
+            {
+                TicketText.Text = "Queue Empty";
+                return;
+            }
+
+            TicketText.Text = ticket.Number;
         }
     }
 }

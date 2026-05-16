@@ -15,23 +15,6 @@ public class QueueService : IQueueService
         _repo = repo;
     }
 
-    public async Task<CustomerQueue> CreateQueueAsync()
-    {
-        var queue = new CustomerQueue
-        {
-            Number = $"A{_counter:D3}",
-            CreatedAt = DateTime.Now,
-            IsCalled = false
-        };
-
-        _counter++;
-
-        await _repo.AddAsync(queue);
-        await _repo.SaveChangesAsync();
-
-        return queue;
-    }
-
     public async Task<CustomerQueue?> CallNextAsync()
     {
         var next = await _repo.GetNextAsync();
@@ -49,5 +32,33 @@ public class QueueService : IQueueService
     public async Task<List<CustomerQueue>> GetAllAsync()
     {
         return await _repo.GetAllAsync();
+    }
+    public async Task<CustomerQueue> CreateQueueAsync()
+    {
+        var lastQueue = await _repo.GetLastQueueAsync();
+
+        int nextNumber = 1;
+
+        if (lastQueue != null)
+        {
+            string numberPart =
+                lastQueue.Number.Substring(1);
+
+            nextNumber =
+                int.Parse(numberPart) + 1;
+        }
+
+        var queue = new CustomerQueue
+        {
+            Number = $"A{nextNumber:D3}",
+            CreatedAt = DateTime.Now,
+            IsCalled = false
+        };
+
+        await _repo.AddAsync(queue);
+
+        await _repo.SaveChangesAsync();
+
+        return queue;
     }
 }

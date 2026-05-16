@@ -11,4 +11,6 @@ public interface IQueueRepository
     Task<CustomerQueue?> GetNextAsync();
 
     Task SaveChangesAsync();
+
+    Task<CustomerQueue?> GetLastQueueAsync();
 }

@@ -3,7 +3,7 @@
   <Project Path="BankDomain/BankDomain.csproj" Id="9a3e92a8-b2ce-47a5-b7d3-68a851526d70" />
   <Project Path="BankInfrastructure/BankInfrastructure.csproj" Id="6165b3a3-568a-475f-83bb-d4e14521bce9" />
   <Project Path="BankServices/BankServices.csproj" Id="cb1093c9-86f5-4865-a3f3-92751a993298" />
-  <Project Path="QueueDisplay/QueueDisplay.csproj" Id="84faebcc-4297-4888-b6bf-85a9e1b0d32d">
+  <Project Path="QueueDisplay/TellerApp.csproj" Id="84faebcc-4297-4888-b6bf-85a9e1b0d32d">
     <Platform Project="x64" />
     <Deploy />
   </Project>

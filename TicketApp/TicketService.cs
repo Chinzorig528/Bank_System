@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace BankTicket
 {
+
     public class TicketService
     {
         private readonly HttpClient _client;
@@ -16,22 +17,15 @@ namespace BankTicket
         public async Task<TicketResponse> CreateTicketAsync()
         {
             HttpResponseMessage response =
-                await _client.PostAsync("api/queue", null);
+                await _client.PostAsync(
+                    "api/queue",
+                    null);
 
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            var ticket =
-                await response.Content
+            return await response.Content
                 .ReadFromJsonAsync<TicketResponse>();
-
-            if (ticket == null)
-                return null;
-
-            if (string.IsNullOrWhiteSpace(ticket.Number))
-                return null;
-
-            return ticket;
         }
     }
 }
