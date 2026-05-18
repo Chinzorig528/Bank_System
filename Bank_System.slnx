@@ -7,6 +7,8 @@
     <Platform Project="x64" />
     <Deploy />
   </Project>
+  <Project Path="QueueDisplayWinForms/QueueDisplayWinForms.csproj" Id="f868b2a6-0101-41d6-80a1-be26902bcaa1" />
+  <Project Path="QueueSocketServer/QueueSocketServer.csproj" Id="4ff1b639-adde-465b-895f-aaf8c862f413" />
   <Project Path="TicketApp.test/TicketApp.test.csproj" Id="eb981483-fa3c-4942-8397-1aaaf5f22b2c" />
   <Project Path="TicketApp/TicketApp.csproj" Id="2b2fc47c-e0d2-45d9-b9d7-852c86592f9e" />
 </Solution>

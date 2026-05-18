@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using QueueDisplay.Services;
 using System;
 using System.Net.Http;
+using TellerApp.Services;
 
 namespace QueueDisplay.Views
 {
@@ -26,15 +27,26 @@ namespace QueueDisplay.Views
             object sender,
             RoutedEventArgs e)
         {
-            var ticket = await _service.CallNextAsync();
+            var ticket =
+                await _service.CallNextAsync();
 
             if (ticket == null)
             {
-                TicketText.Text = "Queue Empty";
+                TicketText.Text =
+                    "Queue Empty";
+
                 return;
             }
 
-            TicketText.Text = ticket.Number;
+            TicketText.Text =
+                ticket.Number;
+
+            SocketSenderService socket =
+                new SocketSenderService();
+
+            await socket.SendQueueAsync(
+                "TELLER1",
+                ticket.Number);
         }
     }
 }
