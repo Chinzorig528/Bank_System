@@ -1,4 +1,5 @@
-﻿using BankServices.Interfaces;
+﻿using BankApi.Channels;
+using BankServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankApi.Controllers;
@@ -9,9 +10,14 @@ public class QueueController : ControllerBase
 {
     private readonly IQueueService _service;
 
-    public QueueController(IQueueService service)
+    private readonly QueueChannelService _channel;
+
+    public QueueController(
+        IQueueService service,
+        QueueChannelService channel)
     {
         _service = service;
+        _channel = channel;
     }
 
     [HttpPost]
@@ -25,12 +31,18 @@ public class QueueController : ControllerBase
     [HttpPost("next")]
     public async Task<IActionResult> Next()
     {
-        var next = await _service.CallNextAsync();
+        var request = new QueueRequest();
 
-        if (next == null)
+        await _channel.Queue.Writer
+            .WriteAsync(request);
+
+        var result =
+            await request.Completion.Task;
+
+        if (result == null)
             return NotFound();
 
-        return Ok(next);
+        return Ok(result);
     }
 
     [HttpGet]

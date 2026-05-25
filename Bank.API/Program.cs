@@ -1,3 +1,4 @@
+using BankApi.Channels;
 using BankInfrastructure.Data;
 using BankInfrastructure.Interfaces;
 using BankInfrastructure.Repositories;
@@ -12,16 +13,25 @@ builder.Services.AddDbContext<BankDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IQueueRepository, QueueRepository>();
+
 builder.Services.AddScoped<IQueueService, QueueService>();
+
+builder.Services
+    .AddSingleton<QueueChannelService>();
+
+builder.Services
+    .AddHostedService<QueueWorker>();
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 app.UseSwagger();
+
 app.UseSwaggerUI();
 
 app.MapControllers();
