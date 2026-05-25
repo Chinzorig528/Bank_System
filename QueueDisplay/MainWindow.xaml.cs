@@ -13,7 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using QueueDisplay.Views;
-
+using TellerApp.Views;
 namespace QueueDisplay
 {
     public sealed partial class MainWindow : Window

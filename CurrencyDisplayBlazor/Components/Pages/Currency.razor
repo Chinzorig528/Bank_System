@@ -1,0 +1,161 @@
+﻿@page "/currency"
+@layout EmptyLayout
+@rendermode InteractiveServer
+
+@using CurrencyDisplayBlazor.Models
+@using Microsoft.AspNetCore.SignalR.Client
+@inject HttpClient Http
+
+@implements IAsyncDisposable
+
+<div class="currency-screen">
+    <h1>ВАЛЮТЫН ХАНШ</h1>
+
+    <p class="updated">
+        Шинэчлэгдсэн: @lastUpdated
+    </p>
+
+    <table class="rate-table">
+        <thead>
+            <tr>
+                <th>Валют</th>
+                <th>Нэр</th>
+                <th>Авах</th>
+                <th>Зарах</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rate in rates)
+            {
+                <tr>
+                    <td class="code">@rate.Code</td>
+                    <td>@rate.Name</td>
+                    <td class="number">@rate.BuyRate.ToString("N2")</td>
+                    <td class="number">@rate.SellRate.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .currency-screen {
+        width: 100vw;
+        height: 100vh;
+        background: #101820;
+        color: white;
+        padding: 40px 60px;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 58px;
+        margin: 0;
+        margin-bottom: 12px;
+        letter-spacing: 4px;
+        font-weight: 700;
+    }
+
+    .updated {
+        text-align: center;
+        color: #d0d0d0;
+        font-size: 22px;
+        margin-bottom: 35px;
+    }
+
+    .rate-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        color: #101820;
+        border-radius: 14px;
+        overflow: hidden;
+        font-size: 30px;
+    }
+
+        .rate-table th {
+            background: #1f2a35;
+            color: white;
+            padding: 22px;
+            text-align: left;
+            font-size: 30px;
+        }
+
+        .rate-table td {
+            padding: 24px 22px;
+            border-bottom: 1px solid #dddddd;
+            font-size: 30px;
+        }
+
+        .rate-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .code {
+        font-weight: bold;
+        font-size: 34px;
+        letter-spacing: 2px;
+    }
+
+    .number {
+        font-weight: 600;
+        text-align: left;
+    }
+</style>
+
+@code {
+    private List<CurrencyRate> rates = new();
+    private HubConnection? hubConnection;
+    private string lastUpdated = "-";
+    private string connectionStatus = "SignalR холбогдоогүй";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        rates = await Http.GetFromJsonAsync<List<CurrencyRate>>(
+            "http://localhost:5122/api/currency"
+        ) ?? new List<CurrencyRate>();
+
+        lastUpdated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl("http://localhost:5122/currencyHub")
+            .WithAutomaticReconnect()
+            .Build();
+
+        hubConnection.On<List<CurrencyRate>>("ReceiveCurrencyRates", async updatedRates =>
+        {
+            rates = updatedRates;
+            lastUpdated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            connectionStatus = "SignalR realtime шинэчлэгдлээ";
+
+            await InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+
+        connectionStatus = "SignalR realtime холбогдсон";
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}
