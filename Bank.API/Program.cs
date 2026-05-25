@@ -21,6 +21,11 @@ builder.Services
 
 builder.Services
     .AddHostedService<QueueWorker>();
+builder.Services
+    .AddSingleton<TransactionChannelService>();
+
+builder.Services
+    .AddHostedService<TransactionWorker>();
 
 builder.Services.AddControllers();
 

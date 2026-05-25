@@ -1,47 +1,111 @@
 <Page
     x:Class="QueueDisplay.Views.TransferPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="#F5F7FA">
 
-    <Grid Background="DarkGray">
+    <Grid>
 
-        <StackPanel
-            Width="400"
-            Spacing="20"
+        <Border
+            Width="500"
+            Padding="40"
+            Background="White"
+            CornerRadius="20"
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
 
-            <TextBlock
-                Text="TRANSFER"
-                FontSize="36"
-                FontWeight="Bold"
-                Foreground="White"/>
+            <StackPanel Spacing="22">
 
-            <TextBox
-                x:Name="FromAccountBox"
-                Foreground="White"
-                Header="From Account"/>
+                <TextBlock
+                    Text="Money Transfer"
+                    FontSize="32"
+                    FontWeight="SemiBold"
+                    Foreground="#111827"/>
 
-            <TextBox
-                x:Name="ToAccountBox"
-                Foreground="White"
-                Header="To Account"/>
+                <TextBlock
+                    Text="Transfer money between accounts"
+                    FontSize="14"
+                    Foreground="#6B7280"/>
 
-            <TextBox
-                x:Name="AmountBox"
-                Header="Amount"
-                Foreground="White"/>
+                <!-- FROM ACCOUNT -->
 
-            <Button
-                Content="Transfer"
-                Height="50"
-                Click="Transfer_Click"/>
+                <StackPanel Spacing="8">
 
-            <TextBlock
-                x:Name="ResultText"
-                Foreground="Lime"/>
+                    <TextBlock
+                        Text="From Account"
+                        FontWeight="SemiBold"
+                        Foreground="#374151"/>
 
-        </StackPanel>
+                    <TextBox
+                        x:Name="FromAccountBox"
+                        Height="45"
+                        Padding="12"
+                        PlaceholderText="Enter sender account"/>
+                </StackPanel>
+
+                <!-- TO ACCOUNT -->
+
+                <StackPanel Spacing="8">
+
+                    <TextBlock
+                        Text="To Account"
+                        FontWeight="SemiBold"
+                        Foreground="#374151"/>
+
+                    <TextBox
+                        x:Name="ToAccountBox"
+                        Height="45"
+                        Padding="12"
+                        PlaceholderText="Enter receiver account"/>
+                </StackPanel>
+
+                <!-- AMOUNT -->
+
+                <StackPanel Spacing="8">
+
+                    <TextBlock
+                        Text="Amount"
+                        FontWeight="SemiBold"
+                        Foreground="#374151"/>
+
+                    <TextBox
+                        x:Name="AmountBox"
+                        Height="45"
+                        Padding="12"
+                        PlaceholderText="Enter amount"/>
+                </StackPanel>
+
+                <!-- BUTTON -->
+
+                <Button
+                    x:Name="TransferButton"
+                    Content="Transfer Money"
+                    Height="50"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Background="#2563EB"
+                    Foreground="White"
+                    CornerRadius="10"
+                    Click="Transfer_Click"/>
+
+                <!-- RESULT -->
+
+                <Border
+                    Background="#ECFDF5"
+                    CornerRadius="10"
+                    Padding="15"
+                    Margin="0,10,0,0">
+
+                    <TextBlock
+                        x:Name="ResultText"
+                        Text="Waiting for transaction..."
+                        Foreground="#059669"
+                        TextWrapping="Wrap"/>
+                </Border>
+
+            </StackPanel>
+
+        </Border>
 
     </Grid>
 </Page>

@@ -1,18 +1,6 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
 
 namespace QueueDisplay.Views
 {
@@ -27,8 +15,65 @@ namespace QueueDisplay.Views
             object sender,
             RoutedEventArgs e)
         {
+            string fromAccount =
+                FromAccountBox.Text;
+
+            string toAccount =
+                ToAccountBox.Text;
+
+            string amountText =
+                AmountBox.Text;
+
+            // validation
+
+            if (string.IsNullOrWhiteSpace(fromAccount) ||
+                string.IsNullOrWhiteSpace(toAccount) ||
+                string.IsNullOrWhiteSpace(amountText))
+            {
+                ResultText.Foreground =
+                    new Microsoft.UI.Xaml.Media.SolidColorBrush(
+                        Microsoft.UI.Colors.Red);
+
+                ResultText.Text =
+                    "Please fill all fields.";
+
+                return;
+            }
+
+            if (!decimal.TryParse(amountText, out decimal amount))
+            {
+                ResultText.Foreground =
+                    new Microsoft.UI.Xaml.Media.SolidColorBrush(
+                        Microsoft.UI.Colors.Red);
+
+                ResultText.Text =
+                    "Invalid amount.";
+
+                return;
+            }
+
+            if (amount <= 0)
+            {
+                ResultText.Foreground =
+                    new Microsoft.UI.Xaml.Media.SolidColorBrush(
+                        Microsoft.UI.Colors.Red);
+
+                ResultText.Text =
+                    "Amount must be greater than 0.";
+
+                return;
+            }
+
+            // success
+
+            ResultText.Foreground =
+                new Microsoft.UI.Xaml.Media.SolidColorBrush(
+                    Microsoft.UI.Colors.Green);
+
             ResultText.Text =
-                "Transfer successful";
+                $"₮{amount:N0} transferred successfully\n" +
+                $"From: {fromAccount}\n" +
+                $"To: {toAccount}";
         }
     }
 }
