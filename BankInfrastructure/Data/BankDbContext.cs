@@ -11,5 +11,8 @@ public class BankDbContext : DbContext
     }
 
     public DbSet<CustomerQueue> CustomerQueues => Set<CustomerQueue>();
+
     public DbSet<CurrencyRate> CurrencyRates => Set<CurrencyRate>();
+
+    public DbSet<BankAccount> BankAccounts => Set<BankAccount>();
 }

@@ -19,6 +19,9 @@ builder.Services.AddScoped<IQueueService, QueueService>();
 builder.Services.AddSingleton<QueueChannelService>();
 builder.Services.AddHostedService<QueueWorker>();
 
+builder.Services.AddSingleton<TransactionChannelService>();
+builder.Services.AddHostedService<TransactionWorker>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
