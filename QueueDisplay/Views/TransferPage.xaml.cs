@@ -22,7 +22,7 @@ namespace QueueDisplay.Views
             // API ADDRESS
 
             _http.BaseAddress =
-                new Uri("https://localhost:7040/");
+                new Uri("https://192.168.88.6:5092/");
         }
 
         // =====================================================

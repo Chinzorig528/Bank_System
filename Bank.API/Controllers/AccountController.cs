@@ -1,4 +1,5 @@
-﻿using BankDomain.Entities;
+﻿using Bank.Application.DTOs;
+using BankDomain.Entities;
 using BankInfrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -159,6 +160,79 @@ namespace Bank.API.Controllers
             }
 
             return Ok(account.Balance);
+        }
+        [HttpPost("transfer")]
+        public async Task<IActionResult> Transfer(
+    TransferDto dto)
+        {
+            // =========================
+            // VALIDATION
+            // =========================
+
+            if (dto.Amount <= 0)
+            {
+                return BadRequest(
+                    "Amount must be greater than 0");
+            }
+
+            if (dto.FromAccount ==
+                dto.ToAccount)
+            {
+                return BadRequest(
+                    "Cannot transfer to same account");
+            }
+
+            // =========================
+            // FIND ACCOUNTS
+            // =========================
+
+            var sender =
+                await _db.BankAccounts
+                    .FirstOrDefaultAsync(x =>
+                        x.AccountNumber ==
+                        dto.FromAccount);
+
+            if (sender == null)
+            {
+                return BadRequest(
+                    "Sender account not found");
+            }
+
+            var receiver =
+                await _db.BankAccounts
+                    .FirstOrDefaultAsync(x =>
+                        x.AccountNumber ==
+                        dto.ToAccount);
+
+            if (receiver == null)
+            {
+                return BadRequest(
+                    "Receiver account not found");
+            }
+
+            // =========================
+            // BALANCE CHECK
+            // =========================
+
+            if (sender.Balance <
+                dto.Amount)
+            {
+                return BadRequest(
+                    "Insufficient balance");
+            }
+
+            // =========================
+            // TRANSFER
+            // =========================
+
+            sender.Balance -= dto.Amount;
+
+            receiver.Balance += dto.Amount;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(
+                "Transfer successful");
         }
 
 
