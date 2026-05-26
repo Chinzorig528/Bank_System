@@ -2,6 +2,7 @@
   <Project Path="Bank.API/BankApi.csproj" />
   <Project Path="BankDomain/BankDomain.csproj" Id="9a3e92a8-b2ce-47a5-b7d3-68a851526d70" />
   <Project Path="BankInfrastructure/BankInfrastructure.csproj" Id="6165b3a3-568a-475f-83bb-d4e14521bce9" />
+  <Project Path="BankServices.Tests/BankServices.Tests.csproj" Id="07696814-3c45-452a-a710-ded981f8310d" />
   <Project Path="BankServices/BankServices.csproj" Id="cb1093c9-86f5-4865-a3f3-92751a993298" />
   <Project Path="CurrencyDisplayBlazor/CurrencyDisplayBlazor.csproj" Id="e921f31c-5305-4405-9c71-abc8f4812cf7" />
   <Project Path="QueueDisplay/TellerApp.csproj" Id="84faebcc-4297-4888-b6bf-85a9e1b0d32d">
