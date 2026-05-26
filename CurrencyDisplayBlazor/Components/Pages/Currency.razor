@@ -6,6 +6,7 @@
 @using CurrencyDisplayBlazor.Models
 @using Microsoft.AspNetCore.SignalR.Client
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 @implements IAsyncDisposable
 
@@ -121,13 +122,19 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
-        {
             return;
-        }
 
-        rates = await Http.GetFromJsonAsync<List<CurrencyRate>>(
-            "http://192.168.88.6:5092/api/currency"
-        ) ?? new List<CurrencyRate>();
+        try
+        {
+            rates = await Http.GetFromJsonAsync<List<CurrencyRate>>(
+                "http://192.168.88.6:5092/api/Currency"
+            ) ?? new List<CurrencyRate>();
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"API Error: {ex.Message}");
+            rates = new List<CurrencyRate>();
+        }
 
         lastUpdated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -140,7 +147,6 @@
         {
             rates = updatedRates;
             lastUpdated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            connectionStatus = "SignalR realtime шинэчлэгдлээ";
 
             await InvokeAsync(StateHasChanged);
         });
