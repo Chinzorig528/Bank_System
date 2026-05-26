@@ -396,5 +396,70 @@ namespace BankServices.Tests
             // Worker-ийг зогсооно.
             await worker.StopAsync(CancellationToken.None);
         }
+
+        [TestMethod]
+        public async Task Next_WhenTwoTellersCallAtSameTime_ReturnsDifferentQueueNumbers()
+        {
+            var databaseName = Guid.NewGuid().ToString();
+
+            await AddQueueAsync(databaseName, "A001", false);
+            await AddQueueAsync(databaseName, "A002", false);
+
+            var channel = new QueueChannelService();
+
+            var worker =
+                await StartWorkerAsync(databaseName, channel);
+
+            using var provider = CreateServiceProvider(databaseName);
+            using var scope = provider.CreateScope();
+
+            var db =
+                scope.ServiceProvider
+                    .GetRequiredService<BankDbContext>();
+
+            var firstController =
+                CreateController(db, channel);
+
+            var secondController =
+                CreateController(db, channel);
+
+            var firstCall =
+                firstController.Next();
+
+            var secondCall =
+                secondController.Next();
+
+            var results =
+                await Task.WhenAll(
+                        firstCall,
+                        secondCall)
+                    .WaitAsync(TimeSpan.FromSeconds(3));
+
+            var queueNumbers =
+                results
+                    .Select(result => result as OkObjectResult)
+                    .Select(result => result!.Value as CustomerQueue)
+                    .Select(queue => queue!.Number)
+                    .OrderBy(number => number)
+                    .ToList();
+
+            CollectionAssert.AreEqual(
+                new List<string>
+                {
+                    "A001",
+                    "A002"
+                },
+                queueNumbers);
+
+            var savedQueues =
+                await db.CustomerQueues
+                    .OrderBy(x => x.Number)
+                    .ToListAsync();
+
+            Assert.IsTrue(
+                savedQueues.All(x => x.IsCalled));
+
+            await worker.StopAsync(CancellationToken.None);
+        }
     }
 }

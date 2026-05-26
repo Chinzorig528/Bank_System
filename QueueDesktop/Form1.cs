@@ -10,14 +10,25 @@ using System.Windows.Forms;
 
 namespace QueueDesktop
 {
+    /// <summary>
+    /// QueueDesktop төслийн үндсэн WinForms цонх.
+    /// </summary>
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Form component-уудыг эхлүүлнэ.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
         }
 
 
+        /// <summary>
+        /// Label дээр click хийх үед дуудагдах event handler.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн label control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private void label1_Click(object sender, EventArgs e)
         {
 

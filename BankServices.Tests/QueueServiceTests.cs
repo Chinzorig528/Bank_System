@@ -195,7 +195,6 @@ namespace BankServices.Tests
         }
 
         [TestMethod]
-        [Ignore]
         public async Task CreateQueueAsync_WhenLastNumberIsA999_CreatesA001Again()
         {
             // Arrange
@@ -208,8 +207,6 @@ namespace BankServices.Tests
             // Хэрвээ хамгийн сүүлийн дугаар A999 болсон бол дараагийн дугаар
             // дахин A001 болж reset хийх ёстой эсэхийг шалгах.
             //
-            // [Ignore] байгаа учраас энэ test одоогоор автоматаар ажиллахгүй.
-            // Учир нь энэ logic project дээр бүрэн хэрэгжээгүй эсвэл түр хойшлуулсан байж болно.
             db.CustomerQueues.Add(
                 new CustomerQueue
                 {
@@ -238,6 +235,54 @@ namespace BankServices.Tests
 
             // Шинэ дугаар дуудагдаагүй байх ёстой.
             Assert.IsFalse(result.IsCalled);
+        }
+
+        [TestMethod]
+        public async Task CreateQueueAsync_WhenLastNumberIsA099_CreatesA100()
+        {
+            using var db = CreateDbContext();
+
+            db.CustomerQueues.Add(
+                new CustomerQueue
+                {
+                    Number = "A099",
+                    IsCalled = false,
+                    CreatedAt = DateTime.Now
+                });
+
+            await db.SaveChangesAsync();
+
+            var repository = new QueueRepository(db);
+            var service = new QueueService(repository);
+
+            var result = await service.CreateQueueAsync();
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("A100", result.Number);
+            Assert.IsFalse(result.IsCalled);
+        }
+
+        [TestMethod]
+        public async Task CallNextAsync_WhenNoUncalledQueueExists_ReturnsNull()
+        {
+            using var db = CreateDbContext();
+
+            db.CustomerQueues.Add(
+                new CustomerQueue
+                {
+                    Number = "A001",
+                    IsCalled = true,
+                    CreatedAt = DateTime.Now
+                });
+
+            await db.SaveChangesAsync();
+
+            var repository = new QueueRepository(db);
+            var service = new QueueService(repository);
+
+            var result = await service.CallNextAsync();
+
+            Assert.IsNull(result);
         }
 
         [TestMethod]

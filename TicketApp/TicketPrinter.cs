@@ -3,14 +3,28 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.IO;
+
 namespace BankTicket
 {
+    /// <summary>
+    /// Хэрэглэгчийн queue ticket-ийг бэлдэж хэвлэх үүрэгтэй class.
+    /// Энэ class нь <see cref="PrintDocument"/> тохиргоо, ticket page layout, print preview,
+    /// бодит хэвлэх үйлдэл болон Windows-ийн <c>Microsoft Print to PDF</c> printer-ээр PDF гаргах logic-ийг хариуцна.
+    /// </summary>
     public class TicketPrinter
     {
         private readonly PrintDocument _printDocument;
 
         private string _ticketNumber = "A000";
 
+        /// <summary>
+        /// Одоогоор тохируулсан ticket-ийг default printer рүү илгээнэ.
+        /// <see cref="StandardPrintController"/> ашигласнаар Windows-ийн хэвлэх progress dialog харуулахгүйгээр хэвлэнэ.
+        /// </summary>
+        /// <remarks>
+        /// Хэвлэгдэх ticket дээр хамгийн сүүлийн queue дугаар гарах ёстой тул энэ method-оос өмнө
+        /// <see cref="SetTicket"/>-ийг дуудах хэрэгтэй.
+        /// </remarks>
         public void Print()
         {
             _printDocument.PrintController =
@@ -18,6 +32,12 @@ namespace BankTicket
 
             _printDocument.Print();
         }
+
+        /// <summary>
+        /// Queue slip-д тохиромжтой жижиг paper size-тай ticket printer үүсгэнэ.
+        /// Мөн document хэвлэгдэх эсвэл preview харагдах бүрт ticket title, queue дугаар, timestamp зурдаг
+        /// <see cref="PrintPage"/> event handler-ийг холбоно.
+        /// </summary>
         public TicketPrinter()
         {
             _printDocument = new PrintDocument();
@@ -31,11 +51,21 @@ namespace BankTicket
                 new Margins(5, 5, 5, 5);
         }
 
+        /// <summary>
+        /// Хэвлэх, preview харах, эсвэл PDF болгоход ашиглах ticket дугаарыг тохируулна.
+        /// </summary>
+        /// <param name="ticket">
+        /// Ticket дээр харуулах queue дугаар. Жишээ нь <c>A001</c>.
+        /// </param>
         public void SetTicket(string ticket)
         {
             _ticketNumber = ticket;
         }
 
+        /// <summary>
+        /// Одоогийн ticket layout-ийг Windows print preview dialog дээр нээнэ.
+        /// Printer рүү илгээхээс өмнө ticket ямар харагдахыг шалгахад хэрэгтэй.
+        /// </summary>
         public void Preview()
         {
             PrintPreviewDialog preview =
@@ -46,6 +76,16 @@ namespace BankTicket
             preview.ShowDialog();
         }
 
+        /// <summary>
+        /// Одоогийн ticket-ийг Windows-ийн <c>Microsoft Print to PDF</c> printer ашиглан PDF файл болгож хадгална.
+        /// Үүссэн PDF нь application executable-ийн хажууд байрлах <c>Tickets</c> folder дотор хадгалагдана.
+        /// </summary>
+        /// <returns>
+        /// Үүсгэсэн PDF файлын absolute path.
+        /// </returns>
+        /// <remarks>
+        /// File name дотор ticket дугаар болон timestamp ордог тул олон ticket хадгалахад өмнөх файлууд дарж бичигдэхгүй.
+        /// </remarks>
         public string PrintToPdfFile()
         {
             string appFolder =
@@ -81,6 +121,17 @@ namespace BankTicket
 
             return filePath;
         }
+
+        /// <summary>
+        /// Print page дээр ticket-ийн content-ийг зурна.
+        /// Layout нь title болон ticket дугаарыг голлуулж, доор нь одоогийн timestamp-ийг нэмдэг.
+        /// </summary>
+        /// <param name="sender">
+        /// Event үүсгэсэн print document.
+        /// </param>
+        /// <param name="e">
+        /// Зурах graphics surface болон page metadata агуулсан print page event argument.
+        /// </param>
         private void PrintPage(
             object sender,
             PrintPageEventArgs e)

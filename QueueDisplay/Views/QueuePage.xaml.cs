@@ -7,12 +7,18 @@ using TellerApp.Services;
 
 namespace QueueDisplay.Views
 {
+    /// <summary>
+    /// Teller-ийн queue дуудах хуудас.
+    /// </summary>
     public sealed partial class QueuePage : Page
     {
         private readonly TellerService _service;
         private readonly string _tellerId =
             QueueAppSettings.TellerId;
 
+        /// <summary>
+        /// Queue page үүсгэж API service болон teller ID-г дэлгэц дээр бэлдэнэ.
+        /// </summary>
         public QueuePage()
         {
             this.InitializeComponent();
@@ -28,6 +34,11 @@ namespace QueueDisplay.Views
                 _tellerId;
         }
 
+        /// <summary>
+        /// Next товч дарахад дараагийн queue дугаарыг API-аас дуудаж socket display руу илгээнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void CallNext_Click(
             object sender,
             RoutedEventArgs e)

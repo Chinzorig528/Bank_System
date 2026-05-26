@@ -7,17 +7,33 @@ using System.Threading.Tasks;
 
 namespace QueueSocketServer
 {
+    /// <summary>
+    /// Queue display болон teller app хооронд TCP socket мессеж дамжуулах console server.
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// Teller ID бүрт холбогдсон display client-ийг хадгална.
+        /// </summary>
         static Dictionary<string, TcpClient> displays =
             new Dictionary<string, TcpClient>();
 
+        /// <summary>
+        /// Компьютер бүрт автоматаар оноосон teller ID-г хадгална.
+        /// </summary>
         static Dictionary<string, string> tellerIdsByMachine =
             new Dictionary<string, string>();
 
+        /// <summary>
+        /// Дараагийн автоматаар оноох teller дугаар.
+        /// </summary>
         static int nextTellerNumber =
             1;
 
+        /// <summary>
+        /// Socket server-ийг эхлүүлж teller/display client-үүдийг тасралтгүй хүлээн авна.
+        /// </summary>
+        /// <param name="args">Console application-д дамжсан параметрүүд.</param>
         static async Task Main(string[] args)
         {
             TcpListener listener =
@@ -36,6 +52,10 @@ namespace QueueSocketServer
             }
         }
 
+        /// <summary>
+        /// Нэг TCP client-ээс ирэх DISPLAY болон CALL мессежүүдийг боловсруулна.
+        /// </summary>
+        /// <param name="client">Холбогдсон teller эсвэл display client.</param>
         static async void HandleClient(TcpClient client)
         {
             NetworkStream stream =
@@ -167,6 +187,12 @@ namespace QueueSocketServer
             }
         }
 
+        /// <summary>
+        /// Auto teller онооход ашиглах машины түлхүүрийг machine name эсвэл IP хаягаар тодорхойлно.
+        /// </summary>
+        /// <param name="client">Холбогдсон TCP client.</param>
+        /// <param name="machineName">Client-ээс илгээсэн computer name.</param>
+        /// <returns>Тухайн компьютерт тогтвортой ашиглах key.</returns>
         static string GetMachineKey(
             TcpClient client,
             string machineName)
@@ -182,6 +208,11 @@ namespace QueueSocketServer
                 : Guid.NewGuid().ToString();
         }
 
+        /// <summary>
+        /// Өмнө нь оноогдсон teller ID байвал буцаана, байхгүй бол шинэ TELLER дугаар үүсгэнэ.
+        /// </summary>
+        /// <param name="machineKey">Компьютерийг ялгах key.</param>
+        /// <returns>Тухайн компьютерт оноосон teller ID.</returns>
         static string GetOrCreateTellerId(string machineKey)
         {
             if (tellerIdsByMachine.ContainsKey(machineKey))

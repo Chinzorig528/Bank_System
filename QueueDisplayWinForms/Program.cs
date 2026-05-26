@@ -6,10 +6,13 @@ using System.Windows.Forms;
 
 namespace QueueDisplayWinForms
 {
+    /// <summary>
+    /// QueueDisplayWinForms application-ийн эхлэх цэг.
+    /// </summary>
     internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// WinForms application-г эхлүүлж үндсэн display form-ийг нээнэ.
         /// </summary>
         [STAThread]
         static void Main()

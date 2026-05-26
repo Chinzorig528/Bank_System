@@ -23,15 +23,14 @@ using Windows.Foundation.Collections;
 namespace QueueDisplay
 {
     /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
+    /// WinUI Teller app-ийн application entry class.
     /// </summary>
     public partial class App : Application
     {
         private Window? _window;
 
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
+        /// Application instance үүсгэж XAML component-уудыг эхлүүлнэ.
         /// </summary>
         public App()
         {
@@ -39,9 +38,9 @@ namespace QueueDisplay
         }
 
         /// <summary>
-        /// Invoked when the application is launched.
+        /// Апп launch хийх үед үндсэн цонхыг нээж идэвхжүүлнэ.
         /// </summary>
-        /// <param name="args">Details about the launch request and process.</param>
+        /// <param name="args">Launch хүсэлтийн мэдээлэл.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _window = new MainWindow();

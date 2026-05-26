@@ -12,13 +12,22 @@ using TellerApp.Services;
 
 namespace TellerApp.Views
 {
+    /// <summary>
+    /// Валютын ханш харах, засах болон realtime шинэчлэлт авах хуудас.
+    /// </summary>
     public sealed partial class CurrencyPage : Page
     {
         private readonly CurrencyApiService _currencyApiService;
         private HubConnection? _hubConnection;
 
+        /// <summary>
+        /// UI дээр bind хийх валютын ханшийн засварлах жагсаалт.
+        /// </summary>
         public ObservableCollection<CurrencyRateEdit> Currencies { get; set; }
 
+        /// <summary>
+        /// Currency page үүсгэж service, collection болон load/unload event-үүдийг бэлдэнэ.
+        /// </summary>
         public CurrencyPage()
         {
             InitializeComponent();
@@ -30,12 +39,20 @@ namespace TellerApp.Views
             Unloaded += CurrencyPage_Unloaded;
         }
 
+        /// <summary>
+        /// Хуудас ачаалагдах үед ханшуудыг уншиж SignalR realtime холболт үүсгэнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Loaded event-ийн мэдээлэл.</param>
         private async void CurrencyPage_Loaded(object sender, RoutedEventArgs e)
         {
             await LoadCurrenciesAsync();
             await ConnectCurrencyHubAsync();
         }
 
+        /// <summary>
+        /// API-аас валютын ханшийг авч UI collection-д онооно.
+        /// </summary>
         private async Task LoadCurrenciesAsync()
         {
             try
@@ -55,6 +72,9 @@ namespace TellerApp.Views
             }
         }
 
+        /// <summary>
+        /// SignalR hub-тэй холбогдож ханш өөрчлөгдөх бүрт дэлгэцийг автоматаар шинэчилнэ.
+        /// </summary>
         private async Task ConnectCurrencyHubAsync()
         {
             if (_hubConnection != null)
@@ -117,6 +137,10 @@ namespace TellerApp.Views
             StatusText.Text = "Realtime connected.";
         }
 
+        /// <summary>
+        /// API-аас ирсэн валютын ханшуудыг засварлах боломжтой UI model болгон хувиргаж list view-д онооно.
+        /// </summary>
+        /// <param name="currencies">API-аас ирсэн валютын ханшууд.</param>
         private void ApplyCurrencies(List<CurrencyRate> currencies)
         {
             Currencies.Clear();
@@ -137,6 +161,11 @@ namespace TellerApp.Views
             CurrencyListView.ItemsSource = Currencies;
         }
 
+        /// <summary>
+        /// UI дээр string хэлбэрээр засварласан ханшийг API руу явуулах model болгон хувиргана.
+        /// </summary>
+        /// <param name="edit">UI дээр засварласан ханш.</param>
+        /// <returns>API-д илгээх валютын ханш.</returns>
         private CurrencyRate ConvertToCurrencyRate(CurrencyRateEdit edit)
         {
             decimal buyRate = decimal.Parse(edit.BuyRate, CultureInfo.InvariantCulture);
@@ -153,6 +182,11 @@ namespace TellerApp.Views
             };
         }
 
+        /// <summary>
+        /// Сонгосон нэг валютын ханшийг шинэчилнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void UpdateSelectedButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -176,6 +210,11 @@ namespace TellerApp.Views
             }
         }
 
+        /// <summary>
+        /// Дэлгэц дээр байгаа бүх валютын ханшийг API дээр нэг дор шинэчилнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void UpdateAllButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -201,6 +240,11 @@ namespace TellerApp.Views
             }
         }
 
+        /// <summary>
+        /// Хуудас хаагдах үед SignalR холболтыг цэвэрлэнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Unloaded event-ийн мэдээлэл.</param>
         private async void CurrencyPage_Unloaded(object sender, RoutedEventArgs e)
         {
             if (_hubConnection == null)

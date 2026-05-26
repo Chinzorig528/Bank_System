@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bank.API.Controllers
 {
+    /// <summary>
+    /// Данс үүсгэх, орлого хийх, зарлага гаргах, шилжүүлэг хийх болон үлдэгдэл шалгах API endpoint-ууд.
+    /// </summary>
     [ApiController]
 
     [Route("account")]
@@ -16,6 +19,11 @@ namespace Bank.API.Controllers
         private readonly TransactionChannelService
             _channel;
 
+        /// <summary>
+        /// Account controller-д өгөгдлийн сан болон transaction channel-ийг онооно.
+        /// </summary>
+        /// <param name="db">Дансны мэдээлэл хадгалах database context.</param>
+        /// <param name="channel">Орлого, зарлагын хүсэлт worker руу дамжуулах channel.</param>
         public AccountController(
             BankDbContext db,
             TransactionChannelService channel)
@@ -27,10 +35,11 @@ namespace Bank.API.Controllers
 
 
 
-        // ======================
-        // CREATE ACCOUNT
-        // ======================
-
+        /// <summary>
+        /// Шинэ данс үүсгэнэ.
+        /// </summary>
+        /// <param name="accountNumber">Үүсгэх дансны дугаар.</param>
+        /// <returns>Амжилттай бол баталгаажуулах мессеж, давхцвал алдаа.</returns>
         [HttpPost("create")]
         public async Task<IActionResult> Create(
             string accountNumber)
@@ -68,10 +77,11 @@ namespace Bank.API.Controllers
 
 
 
-        // ======================
-        // DEPOSIT
-        // ======================
-
+        /// <summary>
+        /// Дансанд орлого хийх хүсэлтийг transaction worker руу илгээнэ.
+        /// </summary>
+        /// <param name="dto">Дансны дугаар болон орлогын дүн.</param>
+        /// <returns>Орлого амжилттай хийгдсэн эсэх boolean үр дүн.</returns>
         [HttpPost("deposit")]
         public async Task<IActionResult> Deposit(
             DepositDto dto)
@@ -101,10 +111,11 @@ namespace Bank.API.Controllers
 
 
 
-        // ======================
-        // WITHDRAW
-        // ======================
-
+        /// <summary>
+        /// Данснаас зарлага гаргах хүсэлтийг transaction worker руу илгээнэ.
+        /// </summary>
+        /// <param name="dto">Дансны дугаар болон зарлагын дүн.</param>
+        /// <returns>Амжилттай бол OK, үлдэгдэл хүрэхгүй бол BadRequest.</returns>
         [HttpPost("withdraw")]
         public async Task<IActionResult> Withdraw(
             WithdrawDto dto)
@@ -140,10 +151,11 @@ namespace Bank.API.Controllers
 
 
 
-        // ======================
-        // GET BALANCE
-        // ======================
-
+        /// <summary>
+        /// Дансны дугаараар тухайн дансны үлдэгдлийг авна.
+        /// </summary>
+        /// <param name="accountNumber">Шалгах дансны дугаар.</param>
+        /// <returns>Дансны үлдэгдэл, данс олдохгүй бол 404.</returns>
         [HttpGet("balance/{accountNumber}")]
         public async Task<IActionResult> Balance(
             string accountNumber)
@@ -161,6 +173,12 @@ namespace Bank.API.Controllers
 
             return Ok(account.Balance);
         }
+
+        /// <summary>
+        /// Нэг данснаас нөгөө данс руу мөнгө шилжүүлнэ.
+        /// </summary>
+        /// <param name="dto">Илгээгч данс, хүлээн авагч данс болон шилжүүлэх дүн.</param>
+        /// <returns>Шилжүүлэг амжилттай эсэх үр дүн.</returns>
         [HttpPost("transfer")]
         public async Task<IActionResult> Transfer(
     TransferDto dto)
@@ -237,10 +255,11 @@ namespace Bank.API.Controllers
 
 
 
-        // ======================
-        // DELETE ACCOUNT
-        // ======================
-
+        /// <summary>
+        /// Үлдэгдэл нь 0 болсон дансыг устгана.
+        /// </summary>
+        /// <param name="accountNumber">Устгах дансны дугаар.</param>
+        /// <returns>Амжилттай бол OK, данс олдохгүй эсвэл үлдэгдэлтэй бол алдаа.</returns>
         [HttpDelete("delete/{accountNumber}")]
         public async Task<IActionResult> Delete(
             string accountNumber)

@@ -10,11 +10,17 @@ using System.Text.Json;
 
 namespace QueueDisplay.Views
 {
+    /// <summary>
+    /// Teller app дээр дансны үлдэгдэл шалгах, орлого, зарлага, шилжүүлэг хийх хуудас.
+    /// </summary>
     public sealed partial class TransferPage : Page
     {
         private readonly HttpClient _http =
             new HttpClient();
 
+        /// <summary>
+        /// Transfer page үүсгэж account API-ийн үндсэн хаягийг тохируулна.
+        /// </summary>
         public TransferPage()
         {
             this.InitializeComponent();
@@ -25,10 +31,11 @@ namespace QueueDisplay.Views
                 new Uri("http://192.168.88.6:5092/");
         }
 
-        // =====================================================
-        // LOAD BALANCE
-        // =====================================================
-
+        /// <summary>
+        /// Оруулсан дансны дугаараар үлдэгдэл шалгана.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void LoadBalance_Click(
             object sender,
             RoutedEventArgs e)
@@ -76,10 +83,11 @@ namespace QueueDisplay.Views
             }
         }
 
-        // =====================================================
-        // DEPOSIT
-        // =====================================================
-
+        /// <summary>
+        /// Оруулсан дансанд заасан дүнгээр орлого хийнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void Deposit_Click(
             object sender,
             RoutedEventArgs e)
@@ -171,10 +179,11 @@ namespace QueueDisplay.Views
             }
         }
 
-        // =====================================================
-        // WITHDRAW
-        // =====================================================
-
+        /// <summary>
+        /// Оруулсан данснаас заасан дүнгээр зарлага гаргана.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void Withdraw_Click(
             object sender,
             RoutedEventArgs e)
@@ -266,10 +275,11 @@ namespace QueueDisplay.Views
             }
         }
 
-        // =====================================================
-        // TRANSFER
-        // =====================================================
-
+        /// <summary>
+        /// Нэг данснаас нөгөө данс руу мөнгө шилжүүлнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void Transfer_Click(
             object sender,
             RoutedEventArgs e)
@@ -374,10 +384,10 @@ namespace QueueDisplay.Views
             }
         }
 
-        // =====================================================
-        // ERROR METHODS
-        // =====================================================
-
+        /// <summary>
+        /// Үлдэгдэл шалгах хэсгийн алдааны мессежийг улаанаар харуулна.
+        /// </summary>
+        /// <param name="message">Харуулах алдааны мессеж.</param>
         private void ShowBalanceError(
             string message)
         {
@@ -389,6 +399,10 @@ namespace QueueDisplay.Views
                 message;
         }
 
+        /// <summary>
+        /// Орлого хийх хэсгийн алдааны мессежийг улаанаар харуулна.
+        /// </summary>
+        /// <param name="message">Харуулах алдааны мессеж.</param>
         private void ShowDepositError(
             string message)
         {
@@ -400,6 +414,10 @@ namespace QueueDisplay.Views
                 message;
         }
 
+        /// <summary>
+        /// Зарлага гаргах хэсгийн алдааны мессежийг улаанаар харуулна.
+        /// </summary>
+        /// <param name="message">Харуулах алдааны мессеж.</param>
         private void ShowWithdrawError(
             string message)
         {
@@ -411,6 +429,10 @@ namespace QueueDisplay.Views
                 message;
         }
 
+        /// <summary>
+        /// Шилжүүлгийн хэсгийн алдааны мессежийг улаанаар харуулна.
+        /// </summary>
+        /// <param name="message">Харуулах алдааны мессеж.</param>
         private void ShowTransferError(
             string message)
         {

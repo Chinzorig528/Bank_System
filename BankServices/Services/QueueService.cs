@@ -4,17 +4,23 @@ using BankServices.Interfaces;
 
 namespace BankServices.Services;
 
+/// <summary>
+/// Queue дугаар үүсгэх болон дараагийн үйлчлүүлэгчийг дуудах бизнес логик.
+/// </summary>
 public class QueueService : IQueueService
 {
     private readonly IQueueRepository _repo;
 
-    private static int _counter = 1;
-
+    /// <summary>
+    /// Queue service-д хэрэгтэй repository-г онооно.
+    /// </summary>
+    /// <param name="repo">Queue өгөгдөлтэй ажиллах repository.</param>
     public QueueService(IQueueRepository repo)
     {
         _repo = repo;
     }
 
+    /// <inheritdoc />
     public async Task<CustomerQueue?> CallNextAsync()
     {
         var next = await _repo.GetNextAsync();
@@ -29,10 +35,13 @@ public class QueueService : IQueueService
         return next;
     }
 
+    /// <inheritdoc />
     public async Task<List<CustomerQueue>> GetAllAsync()
     {
         return await _repo.GetAllAsync();
     }
+
+    /// <inheritdoc />
     public async Task<CustomerQueue> CreateQueueAsync()
     {
         var lastQueue = await _repo.GetLastQueueAsync();

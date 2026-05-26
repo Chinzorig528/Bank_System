@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BankApi.Controllers
 {
+    /// <summary>
+    /// Валютын ханшийг авах, эхлүүлэх, шинэчлэх API endpoint-ууд.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class CurrencyController : ControllerBase
@@ -14,6 +17,11 @@ namespace BankApi.Controllers
         private readonly BankDbContext _context;
         private readonly IHubContext<CurrencyHub> _hubContext;
 
+        /// <summary>
+        /// Валютын controller-д өгөгдлийн сан болон SignalR hub context-ийг онооно.
+        /// </summary>
+        /// <param name="context">Валютын ханш хадгалах database context.</param>
+        /// <param name="hubContext">Ханшийн өөрчлөлтийг realtime илгээх hub context.</param>
         public CurrencyController(
             BankDbContext context,
             IHubContext<CurrencyHub> hubContext)
@@ -22,7 +30,10 @@ namespace BankApi.Controllers
             _hubContext = hubContext;
         }
 
-        // GET: api/currency
+        /// <summary>
+        /// Бүх валютын ханшийг кодоор эрэмбэлж авна.
+        /// </summary>
+        /// <returns>Валютын ханшийн жагсаалт.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -33,7 +44,10 @@ namespace BankApi.Controllers
             return Ok(rates);
         }
 
-        // POST: api/currency/seed
+        /// <summary>
+        /// Валютын ханш хоосон үед анхны жишээ ханшуудыг үүсгэнэ.
+        /// </summary>
+        /// <returns>Одоогийн бүх валютын ханш.</returns>
         [HttpPost("seed")]
         public async Task<IActionResult> Seed()
         {
@@ -102,7 +116,12 @@ namespace BankApi.Controllers
             return Ok(allRates);
         }
 
-        // PUT: api/currency/1
+        /// <summary>
+        /// Нэг валютын ханшийг шинэчилж бүх teller app руу realtime мэдэгдэнэ.
+        /// </summary>
+        /// <param name="id">Шинэчлэх валютын ID.</param>
+        /// <param name="updatedRate">Шинэ ханшийн мэдээлэл.</param>
+        /// <returns>Шинэчлэгдсэн валютын ханш.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] CurrencyRate updatedRate)
         {
@@ -134,7 +153,11 @@ namespace BankApi.Controllers
             return Ok(rate);
         }
 
-        // POST: api/currency/update-all
+        /// <summary>
+        /// Олон валютын ханшийг нэг дор шинэчилж realtime мэдэгдэл илгээнэ.
+        /// </summary>
+        /// <param name="updatedRates">Шинэчлэх валютын ханшууд.</param>
+        /// <returns>Шинэчлэгдсэний дараах бүх ханш.</returns>
         [HttpPost("update-all")]
         public async Task<IActionResult> UpdateAll([FromBody] List<CurrencyRate> updatedRates)
         {

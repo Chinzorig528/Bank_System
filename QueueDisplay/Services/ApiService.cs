@@ -6,10 +6,16 @@ using System;
 
 namespace TellerApp.Services;
 
+/// <summary>
+/// Teller app-ийн хуучин ticket API дуудлагуудыг гүйцэтгэх service.
+/// </summary>
 public class ApiService
 {
     private readonly HttpClient _httpClient;
 
+    /// <summary>
+    /// Ticket API service үүсгэж API серверийн үндсэн хаягийг тохируулна.
+    /// </summary>
     public ApiService()
     {
         _httpClient = new HttpClient();
@@ -18,6 +24,10 @@ public class ApiService
             new Uri("http://192.168.88.6:5092/");
     }
 
+    /// <summary>
+    /// API-аас дараагийн ticket дугаарыг авна.
+    /// </summary>
+    /// <returns>Дараагийн ticket, байхгүй эсвэл алдаа гарвал null.</returns>
     public async Task<QueueTicket?> GetNextTicket()
     {
         var response =
@@ -32,6 +42,10 @@ public class ApiService
         return JsonConvert.DeserializeObject<QueueTicket>(json);
     }
 
+    /// <summary>
+    /// Ticket-ийг дууссан төлөвт шилжүүлэх хүсэлт илгээнэ.
+    /// </summary>
+    /// <param name="id">Дуусгах ticket-ийн ID.</param>
     public async Task CompleteTicket(int id)
     {
         await _httpClient.PostAsync(

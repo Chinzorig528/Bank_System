@@ -7,6 +7,9 @@ using System.Windows.Forms;
 
 namespace QueueDisplayWinForms
 {
+    /// <summary>
+    /// Queue display-ийн WinForms цонх. Socket server-оос teller assignment болон queue дугаар хүлээн авна.
+    /// </summary>
     public partial class Form1 : Form
     {
         TcpClient client =
@@ -25,6 +28,9 @@ namespace QueueDisplayWinForms
                 ? configuredSocketPort
                 : 5000;
 
+        /// <summary>
+        /// Display цонхыг үүсгэж teller ID-г харуулаад socket server-тэй холбогдоно.
+        /// </summary>
         public Form1()
         {
             InitializeComponent();
@@ -39,6 +45,9 @@ namespace QueueDisplayWinForms
             ConnectToServer();
         }
 
+        /// <summary>
+        /// Socket server-тэй холбогдож display төхөөрөмжөө бүртгүүлнэ.
+        /// </summary>
         private async void ConnectToServer()
         {
             try
@@ -74,6 +83,9 @@ namespace QueueDisplayWinForms
             }
         }
 
+        /// <summary>
+        /// Socket server-оос ирэх teller assignment болон queue дугаарын мессежүүдийг сонсоно.
+        /// </summary>
         private async void ReceiveMessages()
         {
             NetworkStream stream =
@@ -124,6 +136,14 @@ namespace QueueDisplayWinForms
             }
         }
 
+        /// <summary>
+        /// Тохиргоог command line argument, environment variable, app.config гэсэн дарааллаар уншина.
+        /// </summary>
+        /// <param name="argumentName">Command line argument-ийн нэр.</param>
+        /// <param name="environmentName">Environment variable-ийн нэр.</param>
+        /// <param name="appSettingName">App.config доторх key нэр.</param>
+        /// <param name="fallback">Утга олдохгүй үед ашиглах default.</param>
+        /// <returns>Олдсон тохиргооны утга.</returns>
         private static string GetSetting(
             string argumentName,
             string environmentName,

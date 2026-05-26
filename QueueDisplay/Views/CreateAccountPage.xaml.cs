@@ -9,11 +9,17 @@ using System.Text.Json;
 
 namespace QueueDisplay.Views
 {
+    /// <summary>
+    /// Teller app дээр шинэ данс үүсгэх болон эхний үлдэгдэл хийх хуудас.
+    /// </summary>
     public sealed partial class CreateAccountPage : Page
     {
         private readonly HttpClient _http =
             new HttpClient();
 
+        /// <summary>
+        /// Create account page үүсгэж account API-ийн үндсэн хаягийг тохируулна.
+        /// </summary>
         public CreateAccountPage()
         {
             this.InitializeComponent();
@@ -22,10 +28,11 @@ namespace QueueDisplay.Views
                 new Uri("http://192.168.88.6:5092/");
         }
 
-        // =========================
-        // CREATE ACCOUNT
-        // =========================
-
+        /// <summary>
+        /// Дансны дугаар болон эхний үлдэгдлийг шалгаад шинэ данс үүсгэнэ.
+        /// </summary>
+        /// <param name="sender">Event үүсгэсэн control.</param>
+        /// <param name="e">Click event-ийн мэдээлэл.</param>
         private async void Create_Click(
             object sender,
             RoutedEventArgs e)
@@ -148,10 +155,10 @@ namespace QueueDisplay.Views
             }
         }
 
-        // =========================
-        // ERROR
-        // =========================
-
+        /// <summary>
+        /// Данс үүсгэх хэсгийн алдааг улаан өнгөөр харуулна.
+        /// </summary>
+        /// <param name="message">Харуулах алдааны мессеж.</param>
         private void ShowError(
             string message)
         {

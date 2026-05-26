@@ -1,1 +1,2 @@
-﻿[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]
+// BankServices.Tests төслийн test method бүрийг боломжтой үед зэрэг ажиллуулах MSTest тохиргоо.
+[assembly: Parallelize(Scope = ExecutionScope.MethodLevel)]

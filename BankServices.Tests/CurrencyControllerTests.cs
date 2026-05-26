@@ -60,6 +60,14 @@ namespace BankServices.Tests
         private CurrencyController CreateController(
             BankDbContext db)
         {
+            return CreateControllerWithClientProxy(db).Controller;
+        }
+
+        private (
+            CurrencyController Controller,
+            Mock<IClientProxy> ClientProxyMock) CreateControllerWithClientProxy(
+                BankDbContext db)
+        {
             // CurrencyHub-ийн fake mock object үүсгэнэ.
             // Энэ нь бодит SignalR hub биш, test-д зориулсан дуураймал object.
             var hubMock =
@@ -99,9 +107,11 @@ namespace BankServices.Tests
                 .Returns(clientsMock.Object);
 
             // Бэлдсэн InMemory database болон fake hub-тай controller үүсгээд буцаана.
-            return new CurrencyController(
-                db,
-                hubMock.Object);
+            return (
+                new CurrencyController(
+                    db,
+                    hubMock.Object),
+                clientProxyMock);
         }
 
         [TestMethod]
@@ -534,6 +544,175 @@ namespace BankServices.Tests
             Assert.AreEqual(
                 3840m,
                 savedEur.SellRate);
+        }
+
+        [TestMethod]
+        public async Task Seed_WhenCurrencyTableIsEmpty_BroadcastsCurrencyRates()
+        {
+            using var db =
+                CreateDbContext();
+
+            var setup =
+                CreateControllerWithClientProxy(db);
+
+            await setup.Controller.Seed();
+
+            setup.ClientProxyMock.Verify(
+                x => x.SendCoreAsync(
+                    "ReceiveCurrencyRates",
+                    It.Is<object?[]>(args =>
+                        HasRatesPayload(args, 5)),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task Update_WhenRateExists_BroadcastsUpdatedCurrencyRates()
+        {
+            using var db =
+                CreateDbContext();
+
+            var rate =
+                new CurrencyRate
+                {
+                    Code = "USD",
+                    Name = "Dollar",
+                    BuyRate = 3450,
+                    SellRate = 3470,
+                    UpdatedAt = DateTime.Now
+                };
+
+            db.CurrencyRates.Add(rate);
+            await db.SaveChangesAsync();
+
+            var setup =
+                CreateControllerWithClientProxy(db);
+
+            await setup.Controller.Update(
+                rate.Id,
+                new CurrencyRate
+                {
+                    Code = "USD",
+                    Name = "Америк доллар",
+                    BuyRate = 3500,
+                    SellRate = 3520
+                });
+
+            setup.ClientProxyMock.Verify(
+                x => x.SendCoreAsync(
+                    "ReceiveCurrencyRates",
+                    It.Is<object?[]>(args =>
+                        HasSingleUpdatedUsdPayload(args)),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        [TestMethod]
+        public async Task UpdateAll_WhenRatesExist_BroadcastsUpdatedCurrencyRates()
+        {
+            using var db =
+                CreateDbContext();
+
+            var usd =
+                new CurrencyRate
+                {
+                    Code = "USD",
+                    Name = "Dollar",
+                    BuyRate = 3450,
+                    SellRate = 3470,
+                    UpdatedAt = DateTime.Now
+                };
+
+            var eur =
+                new CurrencyRate
+                {
+                    Code = "EUR",
+                    Name = "Euro",
+                    BuyRate = 3700,
+                    SellRate = 3740,
+                    UpdatedAt = DateTime.Now
+                };
+
+            db.CurrencyRates.AddRange(usd, eur);
+            await db.SaveChangesAsync();
+
+            var setup =
+                CreateControllerWithClientProxy(db);
+
+            await setup.Controller.UpdateAll(
+                new List<CurrencyRate>
+                {
+                    new CurrencyRate
+                    {
+                        Id = usd.Id,
+                        Code = "USD",
+                        Name = "Америк доллар",
+                        BuyRate = 3500,
+                        SellRate = 3520
+                    },
+                    new CurrencyRate
+                    {
+                        Id = eur.Id,
+                        Code = "EUR",
+                        Name = "Евро",
+                        BuyRate = 3800,
+                        SellRate = 3840
+                    }
+                });
+
+            setup.ClientProxyMock.Verify(
+                x => x.SendCoreAsync(
+                    "ReceiveCurrencyRates",
+                    It.Is<object?[]>(args =>
+                        HasUpdatedUsdAndEurPayload(args)),
+                    It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        private static bool HasRatesPayload(
+            object?[] args,
+            int expectedCount)
+        {
+            var rates =
+                GetRatesPayload(args);
+
+            return rates != null
+                && rates.Count == expectedCount;
+        }
+
+        private static bool HasSingleUpdatedUsdPayload(object?[] args)
+        {
+            var rates =
+                GetRatesPayload(args);
+
+            return rates != null
+                && rates.Count == 1
+                && rates[0].Code == "USD"
+                && rates[0].BuyRate == 3500m
+                && rates[0].SellRate == 3520m;
+        }
+
+        private static bool HasUpdatedUsdAndEurPayload(object?[] args)
+        {
+            var rates =
+                GetRatesPayload(args);
+
+            return rates != null
+                && rates.Count == 2
+                && rates.Any(rate =>
+                    rate.Code == "USD"
+                    && rate.BuyRate == 3500m)
+                && rates.Any(rate =>
+                    rate.Code == "EUR"
+                    && rate.BuyRate == 3800m);
+        }
+
+        private static List<CurrencyRate>? GetRatesPayload(object?[] args)
+        {
+            if (args.Length != 1)
+                return null;
+
+            return args[0] as List<CurrencyRate>;
         }
     }
 }

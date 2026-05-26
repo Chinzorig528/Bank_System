@@ -126,22 +126,8 @@ namespace BankTicket.Tests
 
             var service = new TicketService(client);
 
-            try
-            {
-                // Act
-                // CreateTicketAsync() дуудахад TimeoutHandler дотроос
-                // TaskCanceledException гарах ёстой.
-                await service.CreateTicketAsync();
-
-                // Хэрвээ exception гарахгүй бол test failed болно.
-                Assert.Fail("TaskCanceledException гарах ёстой байсан");
-            }
-            catch (TaskCanceledException)
-            {
-                // Assert
-                // TaskCanceledException баригдсан бол test амжилттай гэсэн үг.
-                Assert.IsTrue(true);
-            }
+            await AssertThrowsAsync<TaskCanceledException>(
+                () => service.CreateTicketAsync());
         }
 
         [TestMethod]
@@ -207,21 +193,8 @@ namespace BankTicket.Tests
 
             var service = new TicketService(client);
 
-            try
-            {
-                // Act
-                // API server unavailable үед HttpRequestException гарах ёстой.
-                await service.CreateTicketAsync();
-
-                // Хэрвээ exception гарахгүй бол test failed болно.
-                Assert.Fail("HttpRequestException гарах ёстой байсан");
-            }
-            catch (HttpRequestException)
-            {
-                // Assert
-                // HttpRequestException баригдсан бол test амжилттай.
-                Assert.IsTrue(true);
-            }
+            await AssertThrowsAsync<HttpRequestException>(
+                () => service.CreateTicketAsync());
         }
 
         [TestMethod]
@@ -252,6 +225,24 @@ namespace BankTicket.Tests
 
             // Ticket дуудаагүй төлөвтэй байна.
             Assert.IsFalse(result.IsCalled);
+        }
+
+        private static async Task AssertThrowsAsync<TException>(
+            Func<Task> action)
+            where TException : Exception
+        {
+            try
+            {
+                await action();
+            }
+            catch (TException)
+            {
+                return;
+            }
+
+            Assert.Fail(
+                typeof(TException).Name
+                + " гарах ёстой байсан");
         }
     }
 
