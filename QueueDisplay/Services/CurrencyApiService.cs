@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using QueueDisplay.Services;
 using TellerApp.Models;
 
 namespace TellerApp.Services
@@ -15,7 +16,7 @@ namespace TellerApp.Services
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://192.168.88.6:5092/")
+                BaseAddress = new Uri(QueueAppSettings.ApiBaseUrl)
             };
         }
 
