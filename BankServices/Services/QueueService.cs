@@ -46,6 +46,9 @@ public class QueueService : IQueueService
 
             nextNumber =
                 int.Parse(numberPart) + 1;
+
+            if (nextNumber > 999)
+                nextNumber = 1;
         }
 
         var queue = new CustomerQueue
