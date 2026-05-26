@@ -29,6 +29,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSignalR();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5092);
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazor", policy =>
@@ -38,7 +43,9 @@ builder.Services.AddCors(options =>
                 "https://localhost:7057",
                 "http://localhost:7057",
                 "http://localhost:5200",
-                "https://localhost:7200"
+                "https://localhost:7200",
+                "http://192.168.88.6:5092",
+                "http://192.168.88.6:5084"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()

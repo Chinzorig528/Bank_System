@@ -15,7 +15,7 @@ namespace TellerApp.Services
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("http://192.168.88.6:5092/");
+                BaseAddress = new Uri("http://192.168.88.6:5092/")
             };
         }
 
