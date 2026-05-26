@@ -15,7 +15,7 @@ public class ApiService
         _httpClient = new HttpClient();
 
         _httpClient.BaseAddress =
-            new Uri("https://localhost:7001/");
+            new Uri("http://192.168.88.6:5092/");
     }
 
     public async Task<QueueTicket?> GetNextTicket()

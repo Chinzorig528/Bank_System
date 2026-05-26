@@ -25,7 +25,7 @@ namespace QueueDisplayWinForms
             try
             {
                 await client.ConnectAsync(
-                    "127.0.0.1",
+                    "192.168.88.6",
                     5000);
 
                 NetworkStream stream =
