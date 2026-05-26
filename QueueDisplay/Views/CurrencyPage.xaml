@@ -88,12 +88,6 @@
             Spacing="15">
 
             <Button
-                Content="Refresh"
-                Width="130"
-                Height="45"
-                Click="RefreshButton_Click"/>
-
-            <Button
                 Content="Selected Update"
                 Width="170"
                 Height="45"

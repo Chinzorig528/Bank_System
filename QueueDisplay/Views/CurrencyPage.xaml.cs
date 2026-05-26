@@ -153,11 +153,6 @@ namespace TellerApp.Views
             };
         }
 
-        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            await LoadCurrenciesAsync();
-        }
-
         private async void UpdateSelectedButton_Click(object sender, RoutedEventArgs e)
         {
             try

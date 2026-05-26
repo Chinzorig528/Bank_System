@@ -59,11 +59,6 @@
                     Height="60"
                     Click="CallNext_Click"/>
 
-                <Button
-                    Content="Complete"
-                    Width="180"
-                    Height="60"/>
-
             </StackPanel>
 
         </StackPanel>
