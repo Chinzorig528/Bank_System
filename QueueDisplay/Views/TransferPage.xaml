@@ -2,110 +2,184 @@
     x:Class="QueueDisplay.Views.TransferPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Background="#F5F7FA">
+    Background="#F3F4F6">
 
-    <Grid>
+    <ScrollViewer>
 
-        <Border
-            Width="500"
-            Padding="40"
-            Background="White"
-            CornerRadius="20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+        <Grid Padding="30">
 
-            <StackPanel Spacing="22">
+            <StackPanel
+                Width="500"
+                Spacing="25"
+                HorizontalAlignment="Center">
 
-                <TextBlock
-                    Text="Money Transfer"
-                    FontSize="32"
-                    FontWeight="SemiBold"
-                    Foreground="#111827"/>
-
-                <TextBlock
-                    Text="Transfer money between accounts"
-                    FontSize="14"
-                    Foreground="#6B7280"/>
-
-                <!-- FROM ACCOUNT -->
-
-                <StackPanel Spacing="8">
-
-                    <TextBlock
-                        Text="From Account"
-                        FontWeight="SemiBold"
-                        Foreground="#374151"/>
-
-                    <TextBox
-                        x:Name="FromAccountBox"
-                        Height="45"
-                        Padding="12"
-                        PlaceholderText="Enter sender account"/>
-                </StackPanel>
-
-                <!-- TO ACCOUNT -->
-
-                <StackPanel Spacing="8">
-
-                    <TextBlock
-                        Text="To Account"
-                        FontWeight="SemiBold"
-                        Foreground="#374151"/>
-
-                    <TextBox
-                        x:Name="ToAccountBox"
-                        Height="45"
-                        Padding="12"
-                        PlaceholderText="Enter receiver account"/>
-                </StackPanel>
-
-                <!-- AMOUNT -->
-
-                <StackPanel Spacing="8">
-
-                    <TextBlock
-                        Text="Amount"
-                        FontWeight="SemiBold"
-                        Foreground="#374151"/>
-
-                    <TextBox
-                        x:Name="AmountBox"
-                        Height="45"
-                        Padding="12"
-                        PlaceholderText="Enter amount"/>
-                </StackPanel>
-
-                <!-- BUTTON -->
-
-                <Button
-                    x:Name="TransferButton"
-                    Content="Transfer Money"
-                    Height="50"
-                    FontSize="16"
-                    FontWeight="SemiBold"
-                    Background="#2563EB"
-                    Foreground="White"
-                    CornerRadius="10"
-                    Click="Transfer_Click"/>
-
-                <!-- RESULT -->
+                <!-- ========================= -->
+                <!-- ACCOUNT BALANCE -->
+                <!-- ========================= -->
 
                 <Border
-                    Background="#ECFDF5"
-                    CornerRadius="10"
-                    Padding="15"
-                    Margin="0,10,0,0">
+                    Background="White"
+                    CornerRadius="20"
+                    Padding="30">
 
-                    <TextBlock
-                        x:Name="ResultText"
-                        Text="Waiting for transaction..."
-                        Foreground="#059669"
-                        TextWrapping="Wrap"/>
+                    <StackPanel Spacing="15">
+
+                        <TextBlock
+                            Text="Check Balance"
+                            FontSize="28"
+                            FontWeight="Bold"/>
+
+                        <TextBox
+                            x:Name="BalanceAccountBox"
+                            Height="45"
+                            PlaceholderText="Account number"/>
+
+                        <Button
+                            Content="Load Balance"
+                            Height="45"
+                            Background="#2563EB"
+                            Foreground="White"
+                            Click="LoadBalance_Click"/>
+
+                        <TextBlock
+                            x:Name="BalanceText"
+                            Text="Balance: ₮0"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Foreground="#2563EB"/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ========================= -->
+                <!-- DEPOSIT -->
+                <!-- ========================= -->
+
+                <Border
+                    Background="White"
+                    CornerRadius="20"
+                    Padding="30">
+
+                    <StackPanel Spacing="15">
+
+                        <TextBlock
+                            Text="Deposit"
+                            FontSize="28"
+                            FontWeight="Bold"/>
+
+                        <TextBox
+                            x:Name="DepositAccountBox"
+                            Height="45"
+                            PlaceholderText="Account number"/>
+
+                        <TextBox
+                            x:Name="DepositAmountBox"
+                            Height="45"
+                            PlaceholderText="Amount"/>
+
+                        <Button
+                            Content="Deposit"
+                            Height="45"
+                            Background="#059669"
+                            Foreground="White"
+                            Click="Deposit_Click"/>
+
+                        <TextBlock
+                            x:Name="DepositResultText"
+                            Text="Waiting..."/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ========================= -->
+                <!-- WITHDRAW -->
+                <!-- ========================= -->
+
+                <Border
+                    Background="White"
+                    CornerRadius="20"
+                    Padding="30">
+
+                    <StackPanel Spacing="15">
+
+                        <TextBlock
+                            Text="Withdraw"
+                            FontSize="28"
+                            FontWeight="Bold"/>
+
+                        <TextBox
+                            x:Name="WithdrawAccountBox"
+                            Height="45"
+                            PlaceholderText="Account number"/>
+
+                        <TextBox
+                            x:Name="WithdrawAmountBox"
+                            Height="45"
+                            PlaceholderText="Amount"/>
+
+                        <Button
+                            Content="Withdraw"
+                            Height="45"
+                            Background="#DC2626"
+                            Foreground="White"
+                            Click="Withdraw_Click"/>
+
+                        <TextBlock
+                            x:Name="WithdrawResultText"
+                            Text="Waiting..."/>
+                    </StackPanel>
+
+                </Border>
+
+                <!-- ========================= -->
+                <!-- TRANSFER -->
+                <!-- ========================= -->
+
+                <Border
+                    Background="White"
+                    CornerRadius="20"
+                    Padding="30">
+
+                    <StackPanel Spacing="15">
+
+                        <TextBlock
+                            Text="Transfer Money"
+                            FontSize="28"
+                            FontWeight="Bold"/>
+
+                        <TextBox
+                            x:Name="FromAccountBox"
+                            Height="45"
+                            PlaceholderText="From account"/>
+
+                        <TextBox
+                            x:Name="ToAccountBox"
+                            Height="45"
+                            PlaceholderText="To account"/>
+
+                        <TextBox
+                            x:Name="TransferAmountBox"
+                            Height="45"
+                            PlaceholderText="Amount"/>
+
+                        <Button
+                            Content="Transfer"
+                            Height="45"
+                            Background="#7C3AED"
+                            Foreground="White"
+                            Click="Transfer_Click"/>
+
+                        <TextBlock
+                            x:Name="TransferResultText"
+                            Text="Waiting..."/>
+                    </StackPanel>
+
                 </Border>
 
             </StackPanel>
 
-        </Border>
+        </Grid>
 
-    </Grid>
+    </ScrollViewer>
+
 </Page>

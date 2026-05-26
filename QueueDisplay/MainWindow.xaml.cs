@@ -48,6 +48,9 @@ namespace QueueDisplay
                 case "currency":
                     ContentFrame.Navigate(typeof(CurrencyPage));
                     break;
+                case "createAccount":
+                    ContentFrame.Navigate(typeof(CreateAccountPage));
+                    break;
             }
         }
     }

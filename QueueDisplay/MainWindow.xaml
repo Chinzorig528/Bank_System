@@ -46,6 +46,15 @@
 
                 </NavigationViewItem>
 
+                <NavigationViewItem
+                    Content="Create Account"
+                    Tag="createAccount">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="World"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                       
+
             </NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame"/>
