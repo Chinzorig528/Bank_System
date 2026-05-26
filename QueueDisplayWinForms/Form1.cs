@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Configuration;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
@@ -11,11 +13,28 @@ namespace QueueDisplayWinForms
             new TcpClient();
 
         string tellerId =
-            "TELLER1";
+            GetSetting("teller", "TELLER_ID", "TellerId", "AUTO");
+
+        string socketHost =
+            GetSetting("socket", "QUEUE_SOCKET_HOST", "SocketHost", "192.168.88.6");
+
+        int socketPort =
+            int.TryParse(
+                GetSetting("socketPort", "QUEUE_SOCKET_PORT", "SocketPort", "5000"),
+                out int configuredSocketPort)
+                ? configuredSocketPort
+                : 5000;
 
         public Form1()
         {
             InitializeComponent();
+
+            lblCounter.Text =
+                tellerId.Equals(
+                    "AUTO",
+                    StringComparison.OrdinalIgnoreCase)
+                    ? "Connecting..."
+                    : tellerId;
 
             ConnectToServer();
         }
@@ -25,14 +44,17 @@ namespace QueueDisplayWinForms
             try
             {
                 await client.ConnectAsync(
-                    "192.168.88.6",
-                    5000);
+                    socketHost,
+                    socketPort);
 
                 NetworkStream stream =
                     client.GetStream();
 
                 string registerMessage =
-                    "DISPLAY|" + tellerId;
+                    "DISPLAY|"
+                    + tellerId
+                    + "|"
+                    + Environment.MachineName;
 
                 byte[] registerData =
                     Encoding.UTF8.GetBytes(
@@ -77,6 +99,20 @@ namespace QueueDisplayWinForms
                         0,
                         byteCount);
 
+                if (queueNumber.StartsWith("ASSIGNED|"))
+                {
+                    tellerId =
+                        queueNumber.Split('|')[1];
+
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        lblCounter.Text =
+                            tellerId;
+                    });
+
+                    continue;
+                }
+
                 this.Invoke((MethodInvoker)delegate
                 {
                     lblQueue.Text =
@@ -86,6 +122,41 @@ namespace QueueDisplayWinForms
                         tellerId;
                 });
             }
+        }
+
+        private static string GetSetting(
+            string argumentName,
+            string environmentName,
+            string appSettingName,
+            string fallback)
+        {
+            string argumentValue =
+                Environment.GetCommandLineArgs()
+                    .Skip(1)
+                    .Select(arg => arg.Split(new[] { '=' }, 2))
+                    .Where(parts => parts.Length == 2)
+                    .Where(parts => parts[0].Equals(
+                        "--" + argumentName,
+                        StringComparison.OrdinalIgnoreCase))
+                    .Select(parts => parts[1])
+                    .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(argumentValue))
+                return argumentValue;
+
+            string environmentValue =
+                Environment.GetEnvironmentVariable(environmentName);
+
+            if (!string.IsNullOrWhiteSpace(environmentValue))
+                return environmentValue;
+
+            string appSettingValue =
+                ConfigurationManager.AppSettings[appSettingName];
+
+            if (!string.IsNullOrWhiteSpace(appSettingValue))
+                return appSettingValue;
+
+            return fallback;
         }
     }
 }

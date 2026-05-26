@@ -12,6 +12,12 @@ namespace QueueSocketServer
         static Dictionary<string, TcpClient> displays =
             new Dictionary<string, TcpClient>();
 
+        static Dictionary<string, string> tellerIdsByMachine =
+            new Dictionary<string, string>();
+
+        static int nextTellerNumber =
+            1;
+
         static async Task Main(string[] args)
         {
             TcpListener listener =
@@ -74,6 +80,31 @@ namespace QueueSocketServer
                     string tellerId =
                         parts[1];
 
+                    bool isAutoTeller =
+                        tellerId.Equals(
+                            "AUTO",
+                            StringComparison.OrdinalIgnoreCase);
+
+                    if (isAutoTeller)
+                    {
+                        string machineKey =
+                            GetMachineKey(
+                                client,
+                                parts.Length > 2 ? parts[2] : "");
+
+                        tellerId =
+                            GetOrCreateTellerId(machineKey);
+
+                        byte[] assignedData =
+                            Encoding.UTF8.GetBytes(
+                                "ASSIGNED|" + tellerId);
+
+                        await stream.WriteAsync(
+                            assignedData,
+                            0,
+                            assignedData.Length);
+                    }
+
                     displays[tellerId] =
                         client;
 
@@ -88,8 +119,26 @@ namespace QueueSocketServer
                     string tellerId =
                         parts[1];
 
+                    bool isAutoTeller =
+                        tellerId.Equals(
+                            "AUTO",
+                            StringComparison.OrdinalIgnoreCase);
+
+                    if (isAutoTeller)
+                    {
+                        string machineKey =
+                            GetMachineKey(
+                                client,
+                                parts.Length > 3 ? parts[2] : "");
+
+                        tellerId =
+                            GetOrCreateTellerId(machineKey);
+                    }
+
                     string queueNumber =
-                        parts[2];
+                        isAutoTeller && parts.Length > 3
+                            ? parts[3]
+                            : parts[2];
 
                     if (displays.ContainsKey(tellerId))
                     {
@@ -116,6 +165,37 @@ namespace QueueSocketServer
                     }
                 }
             }
+        }
+
+        static string GetMachineKey(
+            TcpClient client,
+            string machineName)
+        {
+            if (!string.IsNullOrWhiteSpace(machineName))
+                return machineName;
+
+            IPEndPoint remoteEndPoint =
+                client.Client.RemoteEndPoint as IPEndPoint;
+
+            return remoteEndPoint != null
+                ? remoteEndPoint.Address.ToString()
+                : Guid.NewGuid().ToString();
+        }
+
+        static string GetOrCreateTellerId(string machineKey)
+        {
+            if (tellerIdsByMachine.ContainsKey(machineKey))
+                return tellerIdsByMachine[machineKey];
+
+            string tellerId =
+                "TELLER" + nextTellerNumber;
+
+            nextTellerNumber++;
+
+            tellerIdsByMachine[machineKey] =
+                tellerId;
+
+            return tellerId;
         }
     }
 }

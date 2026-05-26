@@ -10,6 +10,8 @@ namespace QueueDisplay.Views
     public sealed partial class QueuePage : Page
     {
         private readonly TellerService _service;
+        private readonly string _tellerId =
+            QueueAppSettings.TellerId;
 
         public QueuePage()
         {
@@ -17,10 +19,13 @@ namespace QueueDisplay.Views
 
             var client = new HttpClient
             {
-                BaseAddress = new Uri("http://192.168.88.6:5092/")
+                BaseAddress = new Uri(QueueAppSettings.ApiBaseUrl)
             };
 
             _service = new TellerService(client);
+
+            TellerText.Text =
+                _tellerId;
         }
 
         private async void CallNext_Click(
@@ -45,8 +50,10 @@ namespace QueueDisplay.Views
                 new SocketSenderService();
 
             await socket.SendQueueAsync(
-                "TELLER1",
-                ticket.Number);
+                _tellerId,
+                ticket.Number,
+                QueueAppSettings.SocketHost,
+                QueueAppSettings.SocketPort);
         }
     }
 }

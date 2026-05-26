@@ -8,14 +8,16 @@ namespace TellerApp.Services
     {
         public async Task SendQueueAsync(
             string tellerId,
-            string queueNumber)
+            string queueNumber,
+            string socketHost,
+            int socketPort)
         {
             TcpClient client =
                 new TcpClient();
 
             await client.ConnectAsync(
-                "192.168.88.6",
-                5000);
+                socketHost,
+                socketPort);
 
             NetworkStream stream =
                 client.GetStream();
@@ -23,6 +25,8 @@ namespace TellerApp.Services
             string message =
                 "CALL|"
                 + tellerId
+                + "|"
+                + System.Environment.MachineName
                 + "|"
                 + queueNumber;
 
