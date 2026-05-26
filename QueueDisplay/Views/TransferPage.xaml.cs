@@ -22,7 +22,7 @@ namespace QueueDisplay.Views
             // API ADDRESS
 
             _http.BaseAddress =
-                new Uri("https://192.168.88.6:5092/");
+                new Uri("http://192.168.88.6:5092/");
         }
 
         // =====================================================
