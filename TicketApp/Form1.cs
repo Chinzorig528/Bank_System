@@ -30,7 +30,7 @@ namespace BankTicket
             HttpClient client = new HttpClient();
 
             client.BaseAddress =
-                new Uri("http://192.168.88.6:5092/");
+                new Uri("http://172.20.13.121:5092/");
 
             _ticketService =
                 new TicketService(client);

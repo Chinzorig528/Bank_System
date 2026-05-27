@@ -54,8 +54,8 @@ builder.Services.AddCors(options =>
                 "http://localhost:7057",
                 "http://localhost:5200",
                 "https://localhost:7200",
-                "http://192.168.88.6:5092",
-                "http://192.168.88.6:5084"
+                "http://172.20.13.121:5092",
+                "http://172.20.13.121:5084"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()

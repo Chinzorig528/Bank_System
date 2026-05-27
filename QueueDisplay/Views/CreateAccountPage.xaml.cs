@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System;
 using System.Text.Json;
+using QueueDisplay.Services;
 
 namespace QueueDisplay.Views
 {
@@ -25,7 +26,7 @@ namespace QueueDisplay.Views
             this.InitializeComponent();
 
             _http.BaseAddress =
-                new Uri("http://192.168.88.6:5092/");
+                new Uri(QueueAppSettings.ApiBaseUrl);
         }
 
         /// <summary>

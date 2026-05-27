@@ -19,7 +19,7 @@ namespace QueueDisplayWinForms
             GetSetting("teller", "TELLER_ID", "TellerId", "AUTO");
 
         string socketHost =
-            GetSetting("socket", "QUEUE_SOCKET_HOST", "SocketHost", "192.168.88.6");
+            GetSetting("socket", "QUEUE_SOCKET_HOST", "SocketHost", "172.20.13.121");
 
         int socketPort =
             int.TryParse(

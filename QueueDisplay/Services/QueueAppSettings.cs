@@ -18,13 +18,13 @@ public static class QueueAppSettings
     /// Bank API серверийн үндсэн URL.
     /// </summary>
     public static string ApiBaseUrl =>
-        GetValue("api", "QUEUE_API_BASE_URL", "http://192.168.88.6:5092/");
+        GetValue("api", "QUEUE_API_BASE_URL", "http://172.20.13.121:5092/");
 
     /// <summary>
     /// Queue display socket server-ийн host хаяг.
     /// </summary>
     public static string SocketHost =>
-        GetValue("socket", "QUEUE_SOCKET_HOST", "192.168.88.6");
+        GetValue("socket", "QUEUE_SOCKET_HOST", "172.20.13.121");
 
     /// <summary>
     /// Queue display socket server-ийн port.

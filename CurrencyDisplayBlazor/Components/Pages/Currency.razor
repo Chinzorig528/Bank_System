@@ -127,7 +127,7 @@
         try
         {
             rates = await Http.GetFromJsonAsync<List<CurrencyRate>>(
-                "http://192.168.88.6:5092/api/Currency"
+                "http://172.20.13.121:5092/api/Currency"
             ) ?? new List<CurrencyRate>();
         }
         catch (HttpRequestException ex)
@@ -139,7 +139,7 @@
         lastUpdated = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
         hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://192.168.88.6:5092/currencyHub")
+            .WithUrl("http://172.20.13.121:5092/currencyHub")
             .WithAutomaticReconnect()
             .Build();
 
