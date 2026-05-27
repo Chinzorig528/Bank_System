@@ -45,6 +45,10 @@ namespace BankTicket.Tests
             // API-аас ирсэн ticket number A001 байх ёстой.
             Assert.AreEqual("A001", result.Number);
 
+            // API ISO форматтай createdAt буцаасан ч уншигдаж байх ёстой.
+            Assert.AreEqual("2026-05-27T12:42:55.4918995+08:00", result.CreatedAtRaw);
+            Assert.IsNotNull(result.CreatedAt);
+
             // Шинээр үүссэн ticket дуудсан төлөвтэй биш байх ёстой.
             Assert.IsFalse(result.IsCalled);
         }
@@ -268,7 +272,8 @@ namespace BankTicket.Tests
                         @"{
                             ""id"": 1,
                             ""number"": ""A001"",
-                            ""isCalled"": false
+                            ""isCalled"": false,
+                            ""createdAt"": ""2026-05-27T12:42:55.4918995+08:00""
                         }")
                 });
         }
@@ -341,7 +346,8 @@ namespace BankTicket.Tests
                         @"{
                             ""id"": 1,
                             ""number"": ""A001"",
-                            ""isCalled"": false
+                            ""isCalled"": false,
+                            ""createdAt"": ""2026-05-27T12:42:55.4918995+08:00""
                         }")
                 });
         }
