@@ -1,5 +1,7 @@
 using System;
+using System.Buffers;
 using System.Configuration;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -63,7 +65,8 @@ namespace QueueDisplayWinForms
                     "DISPLAY|"
                     + tellerId
                     + "|"
-                    + Environment.MachineName;
+                    + Environment.MachineName
+                    + "\n";
 
                 byte[] registerData =
                     Encoding.UTF8.GetBytes(
@@ -88,52 +91,75 @@ namespace QueueDisplayWinForms
         /// </summary>
         private async void ReceiveMessages()
         {
-            NetworkStream stream =
-                client.GetStream();
-
-            byte[] buffer =
-                new byte[1024];
+            PipeReader reader =
+                PipeReader.Create(client.GetStream());
 
             while (true)
             {
-                int byteCount =
-                    await stream.ReadAsync(
-                        buffer,
-                        0,
-                        buffer.Length);
+                ReadResult result =
+                    await reader.ReadAsync();
 
-                if (byteCount == 0)
-                    break;
+                ReadOnlySequence<byte> buffer =
+                    result.Buffer;
 
-                string queueNumber =
-                    Encoding.UTF8.GetString(
-                        buffer,
-                        0,
-                        byteCount);
+                SequencePosition? position;
 
-                if (queueNumber.StartsWith("ASSIGNED|"))
+                while ((position = buffer.PositionOf((byte)'\n')) != null)
                 {
-                    tellerId =
-                        queueNumber.Split('|')[1];
+                    string message =
+                        Encoding.UTF8.GetString(
+                            buffer.Slice(0, position.Value).ToArray())
+                            .Trim();
 
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        lblCounter.Text =
-                            tellerId;
-                    });
+                    buffer =
+                        buffer.Slice(
+                            buffer.GetPosition(1, position.Value));
 
-                    continue;
+                    HandleMessage(message);
                 }
+
+                reader.AdvanceTo(
+                    buffer.Start,
+                    buffer.End);
+
+                if (result.IsCompleted)
+                    break;
+            }
+
+            await reader.CompleteAsync();
+        }
+
+        /// <summary>
+        /// Нэг мөр мессежийг боловсруулна: teller оноолт эсвэл queue дугаар.
+        /// </summary>
+        /// <param name="message">Socket server-ээс ирсэн мөр.</param>
+        private void HandleMessage(string message)
+        {
+            if (message.Length == 0)
+                return;
+
+            if (message.StartsWith("ASSIGNED|"))
+            {
+                tellerId =
+                    message.Split('|')[1];
 
                 this.Invoke((MethodInvoker)delegate
                 {
-                    lblQueue.Text =
-                        queueNumber;
-
                     lblCounter.Text =
                         tellerId;
                 });
+
+                return;
             }
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                lblQueue.Text =
+                    message;
+
+                lblCounter.Text =
+                    tellerId;
+            });
         }
 
         /// <summary>

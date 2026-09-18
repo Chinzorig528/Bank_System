@@ -1,5 +1,7 @@
-﻿using System;
+using System;
+using System.Buffers;
 using System.Collections.Generic;
+using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,6 +11,7 @@ namespace QueueSocketServer
 {
     /// <summary>
     /// Queue display болон teller app хооронд TCP socket мессеж дамжуулах console server.
+    /// Мессеж бүр '\n'-ээр төгсдөг ба System.IO.Pipelines-ээр мөр мөрөөр нь уншина.
     /// </summary>
     class Program
     {
@@ -53,7 +56,7 @@ namespace QueueSocketServer
         }
 
         /// <summary>
-        /// Нэг TCP client-ээс ирэх DISPLAY болон CALL мессежүүдийг боловсруулна.
+        /// Нэг TCP client-ээс ирэх мессежүүдийг PipeReader-ээр уншиж мөр бүрийг боловсруулна.
         /// </summary>
         /// <param name="client">Холбогдсон teller эсвэл display client.</param>
         static async void HandleClient(TcpClient client)
@@ -61,128 +64,193 @@ namespace QueueSocketServer
             NetworkStream stream =
                 client.GetStream();
 
-            byte[] buffer = new byte[1024];
+            PipeReader reader =
+                PipeReader.Create(stream);
 
-            while (true)
+            try
             {
-                int byteCount;
-
-                try
+                while (true)
                 {
-                    byteCount =
-                        await stream.ReadAsync(
-                            buffer,
-                            0,
-                            buffer.Length);
+                    ReadResult result =
+                        await reader.ReadAsync();
 
-                    if (byteCount == 0)
+                    ReadOnlySequence<byte> buffer =
+                        result.Buffer;
+
+                    while (TryReadLine(ref buffer, out string line))
+                    {
+                        await ProcessMessage(
+                            client,
+                            stream,
+                            line);
+                    }
+
+                    if (result.IsCompleted && !buffer.IsEmpty)
+                    {
+                        await ProcessMessage(
+                            client,
+                            stream,
+                            Encoding.UTF8.GetString(buffer.ToArray()).Trim());
+
+                        buffer =
+                            buffer.Slice(buffer.End);
+                    }
+
+                    reader.AdvanceTo(
+                        buffer.Start,
+                        buffer.End);
+
+                    if (result.IsCompleted)
                         break;
                 }
-                catch
+            }
+            catch
+            {
+            }
+            finally
+            {
+                await reader.CompleteAsync();
+            }
+        }
+
+        /// <summary>
+        /// Buffer-ийн эхнээс '\n' хүртэлх бүтэн мөрийг салгаж авна.
+        /// </summary>
+        /// <param name="buffer">Уншсан byte-ууд. Мөр олдвол түүнийг хасаж богиносгоно.</param>
+        /// <param name="line">Олдсон мөр.</param>
+        /// <returns>Бүтэн мөр олдвол true.</returns>
+        static bool TryReadLine(
+            ref ReadOnlySequence<byte> buffer,
+            out string line)
+        {
+            SequencePosition? position =
+                buffer.PositionOf((byte)'\n');
+
+            if (position == null)
+            {
+                line = null;
+                return false;
+            }
+
+            line =
+                Encoding.UTF8.GetString(
+                    buffer.Slice(0, position.Value).ToArray())
+                    .Trim();
+
+            buffer =
+                buffer.Slice(
+                    buffer.GetPosition(1, position.Value));
+
+            return true;
+        }
+
+        /// <summary>
+        /// Нэг мессежийг (DISPLAY эсвэл CALL) боловсруулна.
+        /// </summary>
+        /// <param name="client">Мессеж илгээсэн client.</param>
+        /// <param name="stream">Тухайн client-ийн stream.</param>
+        /// <param name="message">Мөр хэлбэрийн мессеж.</param>
+        static async Task ProcessMessage(
+            TcpClient client,
+            NetworkStream stream,
+            string message)
+        {
+            if (message.Length == 0)
+                return;
+
+            Console.WriteLine(message);
+
+            string[] parts =
+                message.Split('|');
+
+            // DISPLAY REGISTER
+            if (parts[0] == "DISPLAY")
+            {
+                string tellerId =
+                    parts[1];
+
+                bool isAutoTeller =
+                    tellerId.Equals(
+                        "AUTO",
+                        StringComparison.OrdinalIgnoreCase);
+
+                if (isAutoTeller)
                 {
-                    break;
+                    string machineKey =
+                        GetMachineKey(
+                            client,
+                            parts.Length > 2 ? parts[2] : "");
+
+                    tellerId =
+                        GetOrCreateTellerId(machineKey);
+
+                    byte[] assignedData =
+                        Encoding.UTF8.GetBytes(
+                            "ASSIGNED|" + tellerId + "\n");
+
+                    await stream.WriteAsync(
+                        assignedData,
+                        0,
+                        assignedData.Length);
                 }
 
-                string message =
-                    Encoding.UTF8.GetString(
-                        buffer,
-                        0,
-                        byteCount);
+                displays[tellerId] =
+                    client;
 
-                Console.WriteLine(message);
+                Console.WriteLine(
+                    "Display registered: "
+                    + tellerId);
+            }
 
-                string[] parts =
-                    message.Split('|');
+            // TELLER CALL
+            if (parts[0] == "CALL")
+            {
+                string tellerId =
+                    parts[1];
 
-                // DISPLAY REGISTER
-                if (parts[0] == "DISPLAY")
+                bool isAutoTeller =
+                    tellerId.Equals(
+                        "AUTO",
+                        StringComparison.OrdinalIgnoreCase);
+
+                if (isAutoTeller)
                 {
-                    string tellerId =
-                        parts[1];
+                    string machineKey =
+                        GetMachineKey(
+                            client,
+                            parts.Length > 3 ? parts[2] : "");
 
-                    bool isAutoTeller =
-                        tellerId.Equals(
-                            "AUTO",
-                            StringComparison.OrdinalIgnoreCase);
+                    tellerId =
+                        GetOrCreateTellerId(machineKey);
+                }
 
-                    if (isAutoTeller)
-                    {
-                        string machineKey =
-                            GetMachineKey(
-                                client,
-                                parts.Length > 2 ? parts[2] : "");
+                string queueNumber =
+                    isAutoTeller && parts.Length > 3
+                        ? parts[3]
+                        : parts[2];
 
-                        tellerId =
-                            GetOrCreateTellerId(machineKey);
+                if (displays.ContainsKey(tellerId))
+                {
+                    TcpClient displayClient =
+                        displays[tellerId];
 
-                        byte[] assignedData =
-                            Encoding.UTF8.GetBytes(
-                                "ASSIGNED|" + tellerId);
+                    NetworkStream displayStream =
+                        displayClient.GetStream();
 
-                        await stream.WriteAsync(
-                            assignedData,
-                            0,
-                            assignedData.Length);
-                    }
+                    byte[] data =
+                        Encoding.UTF8.GetBytes(
+                            queueNumber + "\n");
 
-                    displays[tellerId] =
-                        client;
+                    await displayStream.WriteAsync(
+                        data,
+                        0,
+                        data.Length);
 
                     Console.WriteLine(
-                        "Display registered: "
+                        "Sent "
+                        + queueNumber
+                        + " to "
                         + tellerId);
-                }
-
-                // TELLER CALL
-                if (parts[0] == "CALL")
-                {
-                    string tellerId =
-                        parts[1];
-
-                    bool isAutoTeller =
-                        tellerId.Equals(
-                            "AUTO",
-                            StringComparison.OrdinalIgnoreCase);
-
-                    if (isAutoTeller)
-                    {
-                        string machineKey =
-                            GetMachineKey(
-                                client,
-                                parts.Length > 3 ? parts[2] : "");
-
-                        tellerId =
-                            GetOrCreateTellerId(machineKey);
-                    }
-
-                    string queueNumber =
-                        isAutoTeller && parts.Length > 3
-                            ? parts[3]
-                            : parts[2];
-
-                    if (displays.ContainsKey(tellerId))
-                    {
-                        TcpClient displayClient =
-                            displays[tellerId];
-
-                        NetworkStream displayStream =
-                            displayClient.GetStream();
-
-                        byte[] data =
-                            Encoding.UTF8.GetBytes(
-                                queueNumber);
-
-                        await displayStream.WriteAsync(
-                            data,
-                            0,
-                            data.Length);
-
-                        Console.WriteLine(
-                            "Sent "
-                            + queueNumber
-                            + " to "
-                            + tellerId);
-                    }
                 }
             }
         }

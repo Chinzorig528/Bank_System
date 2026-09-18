@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.IO.Pipelines;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,16 +39,17 @@ namespace TellerApp.Services
                 + "|"
                 + System.Environment.MachineName
                 + "|"
-                + queueNumber;
+                + queueNumber
+                + "\n";
 
-            byte[] data =
+            PipeWriter writer =
+                PipeWriter.Create(stream);
+
+            await writer.WriteAsync(
                 Encoding.UTF8.GetBytes(
-                    message);
+                    message));
 
-            await stream.WriteAsync(
-                data,
-                0,
-                data.Length);
+            await writer.CompleteAsync();
 
             client.Close();
         }
